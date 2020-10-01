@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.3.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 233.25 212.38" style="enable-background:new 0 0 233.25 212.38;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#000000;stroke-width:8;stroke-miterlimit:10;}
+	.st1{fill:#414042;}
+	.st2{fill:url(#SVGID_1_);}
+	.st3{fill:none;stroke:#414042;stroke-miterlimit:10;}
+	.st4{fill:#939598;}
+	.st5{fill:#77787B;}
+	.st6{fill:#6D6E71;}
+	.st7{fill:#A7A9AC;}
+	.st8{fill:#BCBEC0;}
+	.st9{fill:#58595B;}
+	.st10{fill:#808285;}
+</style>
+<g>
+	<g>
+		<path class="st0" d="M165.42,89.86l44.81,0.18c1.65,0.01,3.62,1.21,4.38,2.68l14.24,27.62c0.76,1.47,0.42,3.62-0.74,4.79
+			l-20.11,20.18"/>
+	</g>
+	<g>
+		<line class="st0" x1="169.44" y1="126.92" x2="185.75" y2="145.32"/>
+	</g>
+</g>
+<g>
+	<path d="M183,102.66c2.02-0.34,4.66-0.62,8.02-0.62c4.13,0,7.15,0.96,9.07,2.69c1.78,1.54,2.83,3.89,2.83,6.77
+		c0,2.93-0.86,5.23-2.5,6.91c-2.21,2.35-5.81,3.55-9.89,3.55c-1.25,0-2.4-0.05-3.36-0.29v12.96H183V102.66z M187.18,118.26
+		c0.91,0.24,2.06,0.34,3.46,0.34c5.04,0,8.11-2.45,8.11-6.91c0-4.27-3.02-6.34-7.63-6.34c-1.82,0-3.22,0.14-3.94,0.34V118.26z"/>
+</g>
+<circle class="st1" cx="182.63" cy="48.24" r="10.32"/>
+<g>
+	<g>
+		<path d="M201.78,117.59h2.11v7.25h0.05c0.34-0.6,0.86-1.13,1.51-1.49c0.62-0.36,1.37-0.6,2.16-0.6c1.56,0,4.06,0.96,4.06,4.97
+			v6.91h-2.11v-6.67c0-1.87-0.7-3.46-2.69-3.46c-1.37,0-2.45,0.96-2.83,2.11c-0.12,0.29-0.14,0.6-0.14,1.01v7.01h-2.11V117.59z"/>
+	</g>
+</g>
+<g>
+	
+		<radialGradient id="SVGID_1_" cx="81.2212" cy="207.3326" r="74.447" gradientTransform="matrix(1 0 0 0.3 0 145.1328)" gradientUnits="userSpaceOnUse">
+		<stop  offset="0" style="stop-color:#000000;stop-opacity:0.3"/>
+		<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
+	</radialGradient>
+	<ellipse class="st2" cx="81.22" cy="207.33" rx="57.55" ry="5.05"/>
+	<polygon class="st3" points="162.68,172.9 187.92,80.99 120.94,13.19 28.73,37.29 3.5,129.2 70.48,197 	"/>
+	<polygon class="st4" points="120.94,13.19 62.23,71.18 141.81,93.03 	"/>
+	<polygon class="st4" points="62.23,71.18 3.52,129.18 83.1,151.02 	"/>
+	<polygon class="st5" points="141.81,93.03 83.1,151.02 162.68,172.87 	"/>
+	<polygon class="st6" points="83.1,151.02 141.81,93.03 62.23,71.18 	"/>
+	<polygon class="st7" points="62.23,71.18 3.52,129.18 28.73,37.29 	"/>
+	<polygon class="st8" points="62.23,71.18 120.94,13.19 28.73,37.29 	"/>
+	<polygon class="st9" points="141.81,93.02 162.67,172.86 187.91,80.99 	"/>
+	<polygon class="st10" points="141.79,93.03 120.93,13.19 187.9,81 	"/>
+	<polygon class="st6" points="70.48,197 3.52,129.18 83.1,151.02 	"/>
+	<polygon class="st9" points="70.48,197 162.68,172.9 83.1,151.02 	"/>
+</g>
+</svg>
