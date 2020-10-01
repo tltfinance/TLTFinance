@@ -210,7 +210,7 @@ const Balances: React.FC = () => {
           <Footnote>
             Pending rewards
           <FootnoteValue>
-              <PendingRewards /> PHZT
+             {!!account ? <PendingRewards /> : 'locked' }  PHZT
           </FootnoteValue>
           </Footnote>
         </Card>
@@ -224,7 +224,7 @@ const Balances: React.FC = () => {
                 <Spacer />
                 <div style={{ flex: 1 }}>
                   <Label text="TOKEN Price" />
-                  <TokenPrice />
+                  {!!account ? <TokenPrice /> : <StyledPrice>$--.--</StyledPrice> }
                 </div>
               </StyledBalance>
             </StyledBalances>
@@ -265,7 +265,7 @@ const Balances: React.FC = () => {
                 <Spacer />
                 <div style={{ flex: 1 }}>
                   <Label text="Total value staked" />
-                  <TotalStaked />
+                  {!!account ? <TotalStaked /> : <StyledPrice>$--.--</StyledPrice> }
                 </div>
               </StyledBalance>
             </StyledBalances>

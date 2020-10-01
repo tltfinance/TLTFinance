@@ -1,4 +1,4 @@
-//Based on SUSHI, KIMCHI and COMP TOKEN.
+//Based on SUSHI and COMP TOKEN.
 /*
  ______   ___   ___   ______   ______     ______  ______     ______     
 /_____/\ /__/\ /__/\ /_____/\ /_____/\   /_____/\/_____/\   /_____/\    
@@ -850,7 +850,7 @@ contract Pheezez is ERC20("PHEEZEZ Token", "PHZT"), Ownable {
     /// @notice The number of checkpoints for each account
     mapping (address => uint32) public numCheckpoints;
 
-    /// @notice Creates `_amount` token to `_to`. Must only be called by TestManager.
+    /// @notice Creates `_amount` token to `_to`. Must only be called by Digester.
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
     }

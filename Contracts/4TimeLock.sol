@@ -182,9 +182,9 @@ contract Timelock {
     event ExecuteTransaction(bytes32 indexed txHash, address indexed target, uint256 value, string signature,  bytes data, uint256 eta);
     event QueueTransaction(bytes32 indexed txHash, address indexed target, uint256 value, string signature, bytes data, uint256 eta);
 
-    uint256 public constant GRACE_PERIOD = 120 minutes;      //CHANGE TO REFLECT THE FINAL DEPLOYMENT
-    uint256 public constant MINIMUM_DELAY = 3 minutes;       //Instead of minutes use
-    uint256 public constant MAXIMUM_DELAY = 30 minutes;      //14 days, 2 days, 30 days.
+    uint256 public constant GRACE_PERIOD = 10 days;      //CHANGE TO REFLECT THE FINAL DEPLOYMENT
+    uint256 public constant MINIMUM_DELAY = 2 days;       //Instead of minutes use
+    uint256 public constant MAXIMUM_DELAY = 30 days;      //14 days, 2 days, 30 days.
 
     address public admin;
     address public pendingAdmin;
@@ -198,7 +198,7 @@ contract Timelock {
         //require(delay_ <= MAXIMUM_DELAY, "Timelock::setDelay: Delay must not exceed maximum delay.");
 
         admin = msg.sender;
-        delay = 4 minutes;
+        delay = 3 days;
         admin_initialized = false;
     }
 

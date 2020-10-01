@@ -1,3 +1,5 @@
+//Based on SUSHI
+
 /*
  ______   ___   ___   ______   ______     ______  ______     ______     
 /_____/\ /__/\ /__/\ /_____/\ /_____/\   /_____/\/_____/\   /_____/\    
@@ -899,7 +901,7 @@ contract Digester is Ownable {
     // Bonus muliplier for early Token makers can be affected by Governor.
     uint256 public  BONUS_MULTIPLIER = 1; // no bonus
     // halving period (blocks)
-    uint256 public halvingPeriod = 1198; //cambiar al hacer deploy *************************************************************
+    uint256 public halvingPeriod = 64924; //Change before deploy *************************************************************
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
