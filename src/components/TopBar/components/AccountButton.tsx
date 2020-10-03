@@ -16,7 +16,7 @@ const AccountButton: React.FC<AccountButtonProps> = (props) => {
   )
 
   const { account } = useWallet()
-  console.log("CUENTA", account)
+  console.log("ACCOUNT", account)
 
   const handleUnlockClick = useCallback(() => {
     onPresentWalletProviderModal()
