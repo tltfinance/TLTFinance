@@ -150,7 +150,7 @@ const TotalStaked: React.FC = () => {
       $
       <CountUp
         start={start}
-        end={stakedValue}
+        end={!!stakedValue ? 0 : stakedValue}
         decimals={stakedValue < 0 ? 4 : stakedValue > 1e5 ? 0 : 3}
         duration={1}
         separator=","

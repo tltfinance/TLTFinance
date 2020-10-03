@@ -12,14 +12,14 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
   if (visible) {
     return (
-      
-     
+
+
       <StyledMobileMenuWrapper>
         <StyledBackdrop onClick={onDismiss} />
         <StyledMobileMenu>
-        <StyledMenuButton onClick={onDismiss}>
-         <i className="fas fa-times"></i>
-        </StyledMenuButton>
+          <StyledMenuButton onClick={onDismiss}>
+            <i className="fas fa-times"></i>
+          </StyledMenuButton>
           <StyledLink exact activeClassName="active" to="/" onClick={onDismiss}>
             Home
           </StyledLink>
@@ -39,17 +39,44 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
           >
             Governance
           </StyledLink>
+          <StyledAbsoluteLink
+            href="https://medium.com/@tltphzt/key-details-about-tlt-finance-and-pheezez-phzt-4eef3a6975fd"
+            target="_blank"
+          >
+            About
+      </StyledAbsoluteLink>
           <StyledAccountButtonWrapper onClick={onDismiss}>
-            <AccountButton/>
+            <AccountButton />
           </StyledAccountButtonWrapper>
         </StyledMobileMenu>
       </StyledMobileMenuWrapper>
-     
+
     )
   }
   return null
 }
 
+const StyledAbsoluteLink = styled.a`
+color: white; 
+box-sizing: border-box;
+font-size: 24px;
+font-weight: 700;
+padding: ${(props) => props.theme.spacing[3]}px
+  ${(props) => props.theme.spacing[4]}px;
+text-align: center;
+text-decoration: none;
+width: 100%;
+&:hover {
+  background-color: ${(props) => props.theme.color.grey[905]};
+  border-radius: 4px;
+  transition: all 0.2s ease-out;
+}
+&.active {
+  color: ${(props) => props.theme.color.grey[906]};
+  transition: all 0.2s ease-out;
+  text-shadow: 2px 2px 4px #000000;
+}
+`
 
 
 const StyledMenuButton = styled.button`

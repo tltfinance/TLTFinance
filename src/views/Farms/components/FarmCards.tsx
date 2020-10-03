@@ -17,6 +17,7 @@ import useFarms from '../../../hooks/useFarms'
 import usePheezez from '../../../hooks/usePheezez'
 import { getEarned, getDigesterContract } from '../../../pheezez/utils'
 import { bnToDec } from '../../../utils'
+import {stakingStartTime} from '../../../pheezez/lib/constants'
 
 interface FarmWithStakedValue extends Farm, StakedValue {
   apy: BigNumber
@@ -93,7 +94,7 @@ interface FarmCardProps {
 }
 
 const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
-  const [startTime, setStartTime] = useState(1601264900)
+  const [startTime, setStartTime] = useState(stakingStartTime)
   const [harvestable, setHarvestable] = useState(0)
 
   const { account } = useWallet()
@@ -101,13 +102,14 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   const pheezez = usePheezez()
 
   const renderer = (countdownProps: CountdownRenderProps) => {
-    const { hours, minutes, seconds } = countdownProps
+    const { days, hours, minutes, seconds } = countdownProps
     const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds
     const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes
     const paddedHours = hours < 10 ? `0${hours}` : hours
+    const paddedDays = days < 10 ? `0${days}` : days
     return (
       <span style={{ width: '100%' }}>
-        {paddedHours}:{paddedMinutes}:{paddedSeconds}
+        {paddedDays}:{paddedHours}:{paddedMinutes}:{paddedSeconds}
       </span>
     )
   }
@@ -129,7 +131,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   }, [pheezez, lpTokenAddress, account, setHarvestable])
   
   const poolActive = startTime * 1000 - Date.now() <= 0
-  //console.log("DATE", Date.now(), poolActive)
+  console.log("DATE", Date.now(), poolActive)
   var animate: boolean
 
   return (

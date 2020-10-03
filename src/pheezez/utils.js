@@ -92,9 +92,9 @@ export const getCurrentTokensPerBlock = async (digesterContract) => {
 export const calculateTokenUSDValue = async (ethUsdContract, pheezezEthContract) => {
   const reserves = await ethUsdContract.methods.getReserves().call()
   const reserves2 = await pheezezEthContract.methods.getReserves().call()
-  const ethusd = reserves['_reserve1'] / reserves['_reserve0']; // cause USD uses 6 decimal
+  const ethusd = reserves['_reserve1'] / reserves['_reserve0'] * Math.pow(10,18-6);  // cause USD uses 6 decimal
   const pheezezeth = reserves2['_reserve1'] / reserves2['_reserve0'];  //ETH/Pheezez
-  //console.log("TOKEN PRICE", ethusd, pheezezeth, reserves2['_reserve1'], reserves2['_reserve0'])
+  //console.log("TOKEN PRICE", ethusd, pheezezeth, reserves2, reserves2)
   const pheezezUSD = pheezezeth * ethusd
   return pheezezUSD
 }
@@ -102,7 +102,7 @@ export const calculateTokenUSDValue = async (ethUsdContract, pheezezEthContract)
 //Convert ETH to USD price
 export const calculateEtherUSDValue = async (ethUsdContract) => {
   const reserves = await ethUsdContract.methods.getReserves().call()
-  const ethusd = reserves['_reserve1'] / reserves['_reserve0']; // cause USD uses 6 decimal
+  const ethusd = reserves['_reserve1'] / reserves['_reserve0'] * Math.pow(10,18-6); // cause USD uses 6 decimal
   //console.log("ETH PRICE", ethusd)
   return ethusd
 }
@@ -146,7 +146,7 @@ export const getTotalLPWethValue = async (
   const wethAmount = new BigNumber(lpContractWeth)
     .times(portionLp)
     .div(new BigNumber(10).pow(18))
-  //console.log("NOSEEEEE", wethAmount.toNumber())
+  //console.log("WHAT?", wethAmount.toNumber())
   return {
     tokenAmount,
     wethAmount,

@@ -6,20 +6,20 @@ const Nav: React.FC = () => {
     <StyledNav>
       <StyledLink
         target="_blank"
-        href="https://rinkeby.etherscan.io/address/0x5e8e79b9dcbe024f69c6b6414338ffb05067524f"
+        href="https://etherscan.io/address/0x7757a0085817cb6bfd9efdc4f43f49e22ae3be75#code"
       >
         Digester Contract
       </StyledLink>
       <StyledLink
         target="_blank"
-        href="https://rinkeby.etherscan.io/address/0x793D0F8944B05f7C91403CF8925BDbF695e06858#code"
+        href="https://etherscan.io/address/0x15793315642e91479ce0d5c0e9d2cc6a79dbc1b0#code"
       >
         Pheezez Contract
       </StyledLink>
-      <StyledLink target="_blank" href="">
+      <StyledLink target="_blank" href="https://discord.gg/2gqv8RB">
         Discord
       </StyledLink>
-      <StyledLink target="_blank" href="">
+      <StyledLink target="_blank" href="https://twitter.com/FinanceTlt">
         Twitter
       </StyledLink>
     </StyledNav>

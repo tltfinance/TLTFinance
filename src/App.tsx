@@ -80,9 +80,9 @@ const Providers: React.FC = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <UseWalletProvider
-        chainId={4}
+        chainId={1}
         connectors={{
-          walletconnect: { rpcUrl: "https://rinkeby.infura.io/v3/08ba145cba70427c8c6957bae1fce0cd" },
+          walletconnect: { rpcUrl: "https://mainnet.infura.io/v3/08ba145cba70427c8c6957bae1fce0cd" },
         }}
       >
         <PheezezProvider>

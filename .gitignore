@@ -1,1 +1,9 @@
 node_modules
+build
+.firebaserc
+132.lock
+312.json
+firebase.json
+.firebase
+.vscode
+

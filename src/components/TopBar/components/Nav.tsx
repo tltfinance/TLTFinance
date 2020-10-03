@@ -15,7 +15,7 @@ const Nav: React.FC = () => {
         Governance
       </StyledLink>
       <StyledAbsoluteLink
-        href="https://medium.com/toliletfinance/"
+        href="https://medium.com/@tltphzt/key-details-about-tlt-finance-and-pheezez-phzt-4eef3a6975fd"
         target="_blank"
       >
         About

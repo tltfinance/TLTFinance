@@ -22,7 +22,7 @@ const theme = {
   height: 80,
   width: 
    {
-    1: 120,
+    1: 140,
     2: 80,
 
 
