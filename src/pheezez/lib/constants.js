@@ -34,10 +34,10 @@ export const addressMap = {
 ////
 export const contractAddresses = {
   pheezez: {
-    1: '0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0',
+    1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
   },
   digester: {
-    1: '0x7757A0085817CB6bFd9Efdc4F43F49e22ae3be75',
+    1: '0xf16160dBeADe7827058D3dBc9D5628ac930f7555',
   },
   weth: {
     1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
@@ -46,7 +46,7 @@ export const contractAddresses = {
     1: '0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852',
   },
   pheezezeth: {
-    1: '0x9C6312c815A75ea8B1AC32b0C7C2D5EDAe20DF95',
+    1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
   },
 }
 
@@ -75,17 +75,17 @@ export const supportedPools = [
   {
     pid: 0,
     lpAddresses: {
-      1: '0x9C6312c815A75ea8B1AC32b0C7C2D5EDAe20DF95',
+      1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
     },
     tokenAddresses: {
-      1: '0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0',
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
     },
     name: 'PHZT-ETH',
     symbol: 'PHZT-ETH LP',
     tokenSymbol: 'PHZT',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/eth-logo.svg"),
-    unipool: "https://app.uniswap.org/#/add/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0/ETH",
+    unipool: "https://app.uniswap.org/#/add/0x8296BcEd40BA067a1de30aEB5a294258c16a0473/ETH",
   },
   {
     pid: 1,
@@ -105,7 +105,7 @@ export const supportedPools = [
   {
     pid: 2,
     lpAddresses: {
-      1: '0xB21033c1cF2336266a4991ffaC865774DdF461fA',
+      1: '0x6420e846872CfaDEfb43f8a0aca7B5A3068d381D',
     },
     tokenAddresses: {
       1: '0x1E18821E69B9FAA8e6e75DFFe54E7E25754beDa0',
@@ -115,12 +115,12 @@ export const supportedPools = [
     tokenSymbol: 'KIMCHI',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/kimchi-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0x1E18821E69B9FAA8e6e75DFFe54E7E25754beDa0/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0",
+    unipool: "https://app.uniswap.org/#/add/0x1E18821E69B9FAA8e6e75DFFe54E7E25754beDa0/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
     pid: 3,
     lpAddresses: {
-      1: '0x59329CC535E50eF0Af4B7561c986FA8143B1ACbf',
+      1: '0x0868818Ca648E241A6A8CC38c77448933A8cFD11',
     },
     tokenAddresses: {
       1: '0x4b7DfAe2567181E54776337C840e142ACb42AA1F',
@@ -130,12 +130,12 @@ export const supportedPools = [
     tokenSymbol: 'GODKIMCHI',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/gkimchi-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0x4b7DfAe2567181E54776337C840e142ACb42AA1F/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0",
+    unipool: "https://app.uniswap.org/#/add/0x4b7DfAe2567181E54776337C840e142ACb42AA1F/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
     pid: 4,
     lpAddresses: {
-      1: '0x831c55772b4A38b09072FC7Cfb916C9C136A3044',
+      1: '0x5489916B86164249BB2F9bb1579428f68f04B707',
     },
     tokenAddresses: {
       1: '0x429881672B9AE42b8EbA0E26cD9C73711b891Ca5',
@@ -145,12 +145,12 @@ export const supportedPools = [
     tokenSymbol: 'PICKLE',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/pickle-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0x429881672B9AE42b8EbA0E26cD9C73711b891Ca5/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0",
+    unipool: "https://app.uniswap.org/#/add/0x429881672B9AE42b8EbA0E26cD9C73711b891Ca5/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
     pid: 5,
     lpAddresses: {
-      1: '0x1E3eA177de622D49190B80b2691e041E0341828a',
+      1: '0x6Bd1b7EF4Ce45274D247D90DE356565C836F2A57',
     },
     tokenAddresses: {
       1: '0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183',
@@ -160,12 +160,12 @@ export const supportedPools = [
     tokenSymbol: 'SHROOM',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/shroom-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0",
+    unipool: "https://app.uniswap.org/#/add/0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
     pid: 6,
     lpAddresses: {
-      1: '0xD4089c655789AeEFe94BE7Bc65345B7090bE94A5',
+      1: '0x73d961fC88B8be968ff266f1F4FE6B1EcEadAc17',
     },
     tokenAddresses: {
       1: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
@@ -175,12 +175,12 @@ export const supportedPools = [
     tokenSymbol: 'SUSHI',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/sushi-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0x6B3595068778DD592e39A122f4f5a5cF09C90fE2/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0",
+    unipool: "https://app.uniswap.org/#/add/0x6B3595068778DD592e39A122f4f5a5cF09C90fE2/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
     pid: 7,
     lpAddresses: {
-      1: '0x01dC90600bdf4176C06c2F54553273Ae2BAf72d9',
+      1: '0xFe08cE82A6968b01cc9159C92D71C0370587dd7E',
     },
     tokenAddresses: {
       1: '0x066798d9ef0833ccc719076Dab77199eCbd178b0',
@@ -190,12 +190,12 @@ export const supportedPools = [
     tokenSymbol: 'SAKE',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/sake-logo.svg"),
-    unipool: "https://app.uniswap.org/#/add/0x066798d9ef0833ccc719076Dab77199eCbd178b0/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0",
+    unipool: "https://app.uniswap.org/#/add/0x066798d9ef0833ccc719076Dab77199eCbd178b0/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
     pid: 8,
     lpAddresses: {
-      1: '0xbBA1e48b8092FA8ea49bddFB09A1541A8439CB37',
+      1: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
     },
     tokenAddresses: {
       1: '0x6f450f117114075D1D1C91dD64a61C0bA72ca68F',
@@ -205,6 +205,6 @@ export const supportedPools = [
     tokenSymbol: 'PADTHAI',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/padthai-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0x6f450f117114075D1D1C91dD64a61C0bA72ca68F/0x15793315642E91479cE0D5C0e9d2Cc6A79Dbc1B0",
+    unipool: "https://app.uniswap.org/#/add/0x6f450f117114075D1D1C91dD64a61C0bA72ca68F/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
 ]
