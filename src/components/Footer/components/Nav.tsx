@@ -6,13 +6,13 @@ const Nav: React.FC = () => {
     <StyledNav>
       <StyledLink
         target="_blank"
-        href="https://etherscan.io/address/0x7757a0085817cb6bfd9efdc4f43f49e22ae3be75#code"
+        href="https://etherscan.io/address/0xf16160dbeade7827058d3dbc9d5628ac930f7555#code"
       >
         Digester Contract
       </StyledLink>
       <StyledLink
         target="_blank"
-        href="https://etherscan.io/address/0x15793315642e91479ce0d5c0e9d2cc6a79dbc1b0#code"
+        href="https://etherscan.io/address/0x8296bced40ba067a1de30aeb5a294258c16a0473#code"
       >
         Pheezez Contract
       </StyledLink>
