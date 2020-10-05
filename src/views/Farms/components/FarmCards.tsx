@@ -51,7 +51,7 @@ const FarmCards: React.FC = () => {
             .times(PHEEZEZ_PER_BLOCK)
             .times(BLOCKS_PER_YEAR)
             .times(stakedValue[i].poolWeight)
-            .div(stakedValue[i].totalWethValue.toNumber() === 0 ? (stakedValue[i].tokenAmount.times(tokenPrice).times(new BigNumber(2))) : stakedValue[i].totalWethValue)
+            .div(stakedValue[i].totalWethValue.toNumber() === 0 ? (stakedValue[i].pheezezAmount.times(tokenPrice).times(new BigNumber(2))) : stakedValue[i].totalWethValue)
           : null,
       }
       //Explanation of above calculation. Sometimes the LP pairs do not have Eth value, so we need to get the current ether value of these tokens by
