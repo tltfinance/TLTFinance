@@ -10,6 +10,7 @@ import {
   getWethContract,
   getFarms,
   getTotalLPWethValue,
+  getPheezezContract,
 } from '../pheezez/utils'
 import usePheezez from './usePheezez'
 import useBlock from './useBlock'
@@ -20,6 +21,7 @@ export interface StakedValue {
   totalWethValue: BigNumber
   tokenPriceInWeth: BigNumber
   poolWeight: BigNumber
+  pheezezAmount: BigNumber
 }
 //IT re-renders every block
 const useAllStakedValue = () => {
@@ -29,6 +31,7 @@ const useAllStakedValue = () => {
   const farms = getFarms(pheezez)
   const digesterContract = getDigesterContract(pheezez)
   const wethContact = getWethContract(pheezez)
+  const pheezezContract = getPheezezContract(pheezez)
   const block = useBlock()
 
   //console.log("TEST1", pheezez, farms, digesterContract, wethContact, block )
@@ -50,6 +53,7 @@ const useAllStakedValue = () => {
             wethContact,
             lpContract,
             tokenContract,
+            pheezezContract,
             pid,
           ),
       ),

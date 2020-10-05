@@ -114,12 +114,17 @@ export const getTotalLPWethValue = async (
   wethContract,
   lpContract,
   tokenContract,
+  pheezezContract,
   pid,
 ) => {
   // Get balance of the token address relative to the Main Token that represents the pool (Not eth)
   const tokenAmountWholeLP = await tokenContract.methods
     .balanceOf(lpContract.options.address)
     .call()
+  //Get balance of pheezez in the pool (Not eth)
+  const pheezezAmountWholeLP = await pheezezContract.methods
+  .balanceOf(lpContract.options.address)
+  .call()
   const tokenDecimals = await tokenContract.methods.decimals().call()
   // Get the share of lpContract that digesterContract owns
   const balance = await lpContract.methods
@@ -142,6 +147,10 @@ export const getTotalLPWethValue = async (
   const tokenAmount = new BigNumber(tokenAmountWholeLP)
     .times(portionLp)
     .div(new BigNumber(10).pow(tokenDecimals))
+  // Calculate the whole staked pheezezAmount value (Think about the half value of a LP pool in Pheezez Value)
+  const pheezezAmount = new BigNumber(pheezezAmountWholeLP)
+  .times(portionLp)
+  .div(new BigNumber(10).pow(18))
   // Calculate the whole wethAmount staked (Think about the half value of a LP pool represented in Ether Value)
   const wethAmount = new BigNumber(lpContractWeth)
     .times(portionLp)
@@ -149,6 +158,7 @@ export const getTotalLPWethValue = async (
   //console.log("WHAT?", wethAmount.toNumber())
   return {
     tokenAmount,
+    pheezezAmount,
     wethAmount,
     totalWethValue: totalLpWethValue.div(new BigNumber(10).pow(18)),
     tokenPriceInWeth: wethAmount.div(tokenAmount),

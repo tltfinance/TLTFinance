@@ -131,10 +131,10 @@ const TotalStaked: React.FC = () => {
   /////Logic for calculating the price of the total LP tokens staked in the pool***///////////////////
   if (allStakedValue && allStakedValue.length) {
     allStakedValue.forEach((element, index) => {
-      //  console.log(`Current index: ${index}`);
-      //  console.log(element.wethAmount.toNumber(), element.tokenAmount.toNumber());
-      if (element.tokenPriceInWeth.toNumber() === 0 && element.tokenAmount.toNumber() > 0) {
-        sumToken += element.tokenAmount.times(tokenUsd).toNumber()  //To find the value of tokens that do not have an Ether pair in their LP. (PHEEZEZ)
+       // console.log(`Current index: ${index}`);
+       // console.log(element.wethAmount.toNumber(), element..toNumber());
+      if (element.tokenPriceInWeth.toNumber() === 0 && element.pheezezAmount.toNumber() > 0) {
+        sumToken += element.pheezezAmount.times(tokenUsd).toNumber()  //To find the value of tokens that do not have an Ether pair in their LP. (PHEEZEZ)
         // console.log("TEST%%%", sumToken, tokenUsd)
       }
       else {
