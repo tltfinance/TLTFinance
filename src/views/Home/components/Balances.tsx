@@ -28,7 +28,7 @@ import Container from '../../../components/Container'
 
 let ethUsd = 0
 let tokenUsd = 0
-let stakedValue = 0
+
 
 
 const PendingRewards: React.FC = () => {
@@ -110,6 +110,8 @@ const TotalStaked: React.FC = () => {
   const pheezez = usePheezez()
   const ehtusdContract = getethusdContract(pheezez)
   const [ethUsd, setEthUsd] = useState(0)
+  const [stakedValue, setStakedValue] = useState(0)
+  
 
   useEffect(() => {
     async function fetchEthPrice() {
@@ -125,6 +127,7 @@ const TotalStaked: React.FC = () => {
   let sumTokenEth = 0
   let sumToken = 0
   let sumWeth = 0
+  let staked = 0
   /////Logic for calculating the price of the total LP tokens staked in the pool***///////////////////
   if (allStakedValue && allStakedValue.length) {
     allStakedValue.forEach((element, index) => {
@@ -140,21 +143,26 @@ const TotalStaked: React.FC = () => {
     });
     sumToken = sumToken * 2
     sumTokenEth = (sumWeth * ethUsd) * 2
-    stakedValue = sumToken + sumTokenEth
+    staked = sumToken + sumTokenEth
 
   }
+  useEffect(() => {
+    setStart(stakedValue)
+    setStakedValue(staked)
+  }, [staked])
 
   //console.log("ASTAKED VALUE", stakedValue, tokenUsd, sumTokenEth)
+  //Check how to fix the countup refresh, weird.
   return (
     <StyledPrice>
-      $
+     ${stakedValue === 0 ? stakedValue.toFixed(2) : 
       <CountUp
         start={start}
-        end={!!stakedValue ? 0 : stakedValue}
-        decimals={stakedValue < 0 ? 4 : stakedValue > 1e5 ? 0 : 3}
+        end={stakedValue}
+        decimals={stakedValue < 0 ? 4 : stakedValue > 1e5 ? 0 : 4}
         duration={1}
         separator=","
-      />
+      />}
     </StyledPrice>
   )
 }

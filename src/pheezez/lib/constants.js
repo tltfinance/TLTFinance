@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js/bignumber'
 
 export const SUBTRACT_GAS_LIMIT = 100000
-export const stakingStartTime =1601864644   //****Modify */
+export const stakingStartTime =1601866920   //****Modify */
 export const proposalStartTime =1602734905   //****Modify */
 
 const ONE_MINUTE_IN_SECONDS = new BigNumber(60)
@@ -193,9 +193,9 @@ export const supportedPools = [
     unipool: "https://app.uniswap.org/#/add/0x066798d9ef0833ccc719076Dab77199eCbd178b0/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
-    pid: 8,
+    pid: 9,
     lpAddresses: {
-      1: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+      1: '0x1887d431e6a0e276e6bd8b6458740266e422040b',
     },
     tokenAddresses: {
       1: '0x6f450f117114075D1D1C91dD64a61C0bA72ca68F',

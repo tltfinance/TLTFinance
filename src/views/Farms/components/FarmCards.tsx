@@ -131,7 +131,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   }, [pheezez, lpTokenAddress, account, setHarvestable])
   
   const poolActive = startTime * 1000 - Date.now() <= 0
-  console.log("DATE", Date.now(), poolActive)
+  //console.log("DATE", Date.now(), poolActive)
   var animate: boolean
 
   return (
