@@ -17,7 +17,7 @@ import useFarms from '../../../hooks/useFarms'
 import usePheezez from '../../../hooks/usePheezez'
 import { getEarned, getDigesterContract } from '../../../pheezez/utils'
 import { bnToDec } from '../../../utils'
-import {stakingStartTime} from '../../../pheezez/lib/constants'
+import { stakingStartTime } from '../../../pheezez/lib/constants'
 
 interface FarmWithStakedValue extends Farm, StakedValue {
   apy: BigNumber
@@ -122,26 +122,56 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
         lpTokenAddress,
         account,
       )
-      
+
       setHarvestable(bnToDec(earned))
     }
     if (pheezez && account) {
       fetchEarned()
     }
   }, [pheezez, lpTokenAddress, account, setHarvestable])
-  
+
   const poolActive = startTime * 1000 - Date.now() <= 0
   //console.log("DATE", Date.now(), poolActive)
   var animate: boolean
+  let mult: string
+  switch (farm.tokenSymbol) {
+    case 'PHZT':
+      mult = '10x'
+      break
+    case 'USDT':
+      mult = '2x'
+      break
+    case 'KIMCHI':
+      mult = '3x'
+      break
+    case 'GODKIMCHI':
+      mult = '4x'
+      break
+    case 'PICKLE':
+      mult = '5x'
+      break
+    case 'SHROOM':
+      mult = '5x'
+      break
+    case 'SUSHI':
+      mult = '6x'
+      break
+    case 'SAKE':
+      mult = '6x'
+      break
+    case 'PADTHAI':
+      mult = '1x'
+      break
+  }
 
   return (
     <StyledCardWrapper>
       {farm.tokenSymbol === 'PHZT' ? animate = true : animate = false}
-      <Card animation = {animate}>
-        <BackgroundSquare/>
+      <Card animation={animate}>
+        <BackgroundSquare />
         <CardContent>
           <StyledContent>
-            <CardIcon size='md'>
+            <CardIcon size='md' label={mult}>
               <Spaner>{<img src={farm.icon} height={55} alt="Logo" />}</Spaner>
               <Spaner>{<img src={farm.icon2} height={55} alt="Logo" />}</Spaner>
             </CardIcon>

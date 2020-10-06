@@ -3,10 +3,11 @@ import styled, { ThemeContext }from 'styled-components'
 
 interface CardIconProps {
   children?: React.ReactNode,
+  label?: string
   size?: 'sm' | 'md'
 }
 
-const CardIcon: React.FC<CardIconProps> = ({ children, size, }) => {
+const CardIcon: React.FC<CardIconProps> = ({ children, label, size, }) => {
 
   const { width } = useContext(ThemeContext)
   let iconwidth: number
@@ -22,6 +23,7 @@ const CardIcon: React.FC<CardIconProps> = ({ children, size, }) => {
   //console.log("WIDTH", iconwidth)
   return (
   <StyledCardIcon width={iconwidth} >
+  <Multiplier>{label}</Multiplier>
     {children}
   </StyledCardIcon>
   )
@@ -31,8 +33,19 @@ interface StyledCardIconProps {
   width: number
 }
 
+const Multiplier = styled.span`
+background: linear-gradient(45deg, ${props => props.theme.color.gradient[200]} 0%, ${props => props.theme.color.gradient[100]} 100%);
+border-radius: 15%;
+color: white;
+position: absolute;
+right: 60px;
+top: 10px;
+font-size: 18px;
+width: 35px;
+text-align: center;
+`
 const StyledCardIcon = styled.div<StyledCardIconProps>`
-  background: linear-gradient(45deg, ${props => props.theme.color.gradient[200]} 0%, ${props => props.theme.color.gradient[100]} 100%);
+  background: linear-gradient(45deg, ${props => props.theme.color.gradient[400]} 0%, ${props => props.theme.color.gradient[300]} 100%);
   font-size: 36px;
   color: white;
   height: 80px;

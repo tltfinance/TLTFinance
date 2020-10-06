@@ -15,6 +15,8 @@ export const red = {
 export const gradient = {
   100: "#00dbde",
   200: "#fc00ff",
+  300: "#393c9e",
+  400: "#9215e6",
 }
 
 export const grey = {
