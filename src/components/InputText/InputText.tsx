@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-export interface InputProps {
+export interface InputTextProps {
   endAdornment?: React.ReactNode,
   onChange: (e: React.FormEvent<HTMLInputElement>) => void,
   placeholder?: string,
@@ -9,7 +9,7 @@ export interface InputProps {
   value: string,
 }
 
-const Input: React.FC<InputProps> = ({
+const InputText: React.FC<InputTextProps> = ({
   endAdornment,
   onChange,
   placeholder,
@@ -19,7 +19,7 @@ const Input: React.FC<InputProps> = ({
   return (
     <StyledInputWrapper>
       {!!startAdornment && startAdornment}
-      <StyledInput type="number" min="0" placeholder={placeholder} value={value} onChange={onChange} />
+      <StyledInput placeholder={placeholder} value={value} onChange={onChange} />
       {!!endAdornment && endAdornment}
     </StyledInputWrapper>
   )
@@ -51,4 +51,4 @@ const StyledInput = styled.input`
   -moz-appearance:textfield;
 `
 
-export default Input
+export default InputText

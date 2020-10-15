@@ -1,14 +1,28 @@
-import React from 'react'
-import styled, { css, keyframes } from 'styled-components'
+import React, {useContext} from 'react'
+import styled, { css, keyframes, ThemeContext } from 'styled-components'
 
 interface CardProps {
   children?: React.ReactNode,
-  animation?: boolean
+  animation?: boolean,
+  variant?: 'default' | 'secondary'
 }
 
-const Card: React.FC<CardProps> = ({ children, animation, }) => {
+const Card: React.FC<CardProps> = ({ children, animation, variant }) => {
+  const { color } = useContext(ThemeContext)
+  let color1: string
+  let color2: string
+  switch (variant) {
+    case 'secondary':
+      color1 = color.gradient[300]
+      color2 = color.gradient[400]
+      break
+    case 'default':
+    default:
+      color1 = color.gradient[100]
+      color2 = color.gradient[200]
+  }
   return (
-  <StyledCard animate={animation}>
+  <StyledCard animate={animation} firstColor={color1} secondColor={color2}>
        {children}
   </StyledCard>
 
@@ -17,6 +31,8 @@ const Card: React.FC<CardProps> = ({ children, animation, }) => {
 
 interface AnimatedCardProps {
   animate?: boolean,
+  firstColor: string,
+  secondColor: string
 }
 
 const rotate = keyframes`
@@ -34,7 +50,7 @@ const Still = keyframes`
 `
 
 const StyledCard = styled.div<AnimatedCardProps>`
-  background: linear-gradient(45deg, ${(props) => props.theme.color.gradient[100]} 0%, ${(props) => props.theme.color.gradient[200]} 100%);
+  background: linear-gradient(45deg, ${(props) => props.firstColor} 0%, ${(props) => props.secondColor} 100%);
   background-size: ${props => props.animate ? css`100% 100%` : css`100% 100%`}; 
   border-radius: 1rem;
   padding: 1rem 0 2rem;

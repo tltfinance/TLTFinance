@@ -95,7 +95,7 @@ const Farm: React.FC = () => {
         </div>
         <Spacer size="lg" />
         <StyledInfo>
-          Witdrawal of earned Tokens is executed whenever LP Tokens are staked or unstaked!
+          Withdrawal of earned Tokens is executed whenever LP Tokens are staked or unstaked!
         </StyledInfo>
         <Spacer size="lg" />
       </StyledFarm>

@@ -9,11 +9,12 @@ import FarmsProvider from './contexts/Farms'
 import ModalsProvider from './contexts/Modals'
 import TransactionProvider from './contexts/Transactions'
 import PheezezProvider from './contexts/PheezezProvider'
+import GovProvider from './contexts/Governance'
 import useModal from './hooks/useModal'
 import theme from './theme'
 import Farms from './views/Farms'
 import Home from './views/Home'
-import Stake from './views/Stake'
+import Governance from './views/Governance'
 import TSParticles from './components/Particles/Particles'
 
 
@@ -64,7 +65,7 @@ const App: React.FC = () => {
                 <Farms />
               </Route>
               <Route path="/gov">
-                <Stake />
+                <Governance />
               </Route>
             </Switch>
           </div>
@@ -88,8 +89,10 @@ const Providers: React.FC = ({ children }) => {
         <PheezezProvider>
           <TransactionProvider>
             <FarmsProvider>
+            <GovProvider>
               <ModalsProvider>{children}
               </ModalsProvider>
+              </GovProvider>
             </FarmsProvider>
           </TransactionProvider>
         </PheezezProvider>

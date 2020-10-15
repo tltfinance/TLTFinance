@@ -30,7 +30,7 @@ export const addressMap = {
 }
 
 
-////CAMBIAR LOS NUMEROS DE LAS NETWORK IDSSSSS
+////Change network Id numbers when needed
 ////
 export const contractAddresses = {
   pheezez: {
@@ -48,8 +48,13 @@ export const contractAddresses = {
   pheezezeth: {
     1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
   },
+  gov: {
+    1: '0x62823702F035edD42d678563C2c6af5648908A48',
+  },
+  timelock: {
+    1: '0xb07b20EF02Fe024f4Cb2E6F48F3af96Ba2e41994',
+  },
 }
-
 /*
 UNI-V2 LP Address on mainnet for reference
 ==========================================

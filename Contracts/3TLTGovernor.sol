@@ -196,9 +196,9 @@ contract GovernorAlpha {
     } // 1 block
 
     /// @notice The duration of voting on a proposal, in blocks
-    function votingPeriod() public pure returns (uint256) {
-        return 50;
-    } // ~3 days in blocks (assuming 13s blocks) ***CAAAAMMMMMBIIIIAAARRR*****
+    function votingPeriod() public view returns (uint256) {
+        return vPeriod;
+    } // ~3 days in blocks (assuming 13s blocks) ***CHANGE WHEN NEEDED*****
 
     /// @notice The address of the Timelock
     TimelockInterface public timelock;
@@ -223,6 +223,9 @@ contract GovernorAlpha {
 
     /// @notice Allows vote ratio to be changed.
     uint256 public vRatio;
+
+    /// @notice Allows votation Period to be changed.
+    uint256 public vPeriod = 19938;
 
     struct Proposal {
         //Unique id for looking up a proposal
@@ -327,20 +330,15 @@ contract GovernorAlpha {
 
     constructor(
         address timelock_,
-        address pheezez_,
-        address guardian_,
-        uint256 proposedelay_,
-        uint256 quorumratio_,
-        uint256 thresholdratio_,
-        uint256 voteratio_
+        address pheezez_  
     ) public {
         timelock = TimelockInterface(timelock_);
         pheezez = PHEEZEZInterface(pheezez_);
-        guardian = guardian_;
-        proposeDelay = proposedelay_;
-        qRatio = quorumratio_;
-        tRatio = thresholdratio_;
-        vRatio = voteratio_;
+        guardian = msg.sender;
+        proposeDelay = 11058124;
+        qRatio = 4;
+        tRatio = 1;
+        vRatio = 2;
     }
 
     function propose(
@@ -626,6 +624,15 @@ contract GovernorAlpha {
             "GovernorAlpha::changeVotingRatio: only the guardian can change the Ratio"
         );
         vRatio = ratio;
+    }
+
+    
+    function changeVotingPeriod(uint256 period) public {
+        require(
+            msg.sender == guardian,
+            "GovernorAlpha::changeVotingPeriod: only the guardian can change the Ratio"
+        );
+        vPeriod = period;
     }
 
     function __acceptAdmin() public {

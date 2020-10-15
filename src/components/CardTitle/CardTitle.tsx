@@ -11,7 +11,7 @@ const CardTitle: React.FC<CardTitleProps> = ({ text }) => (
 
 const StyledCardTitle = styled.div`
   color: ${(props) => props.theme.color.grey[700]};
-  font-size: 19px;
+  font-size: 23px;
   font-weight: 700;
   text-shadow: 2px 2px 4px #000000;
   padding: ${(props) => props.theme.spacing[4]}px;

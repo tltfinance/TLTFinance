@@ -4,6 +4,8 @@ import DigesterAbi from './abi/digester.json'
 import PheezezAbi from './abi/pheezez.json'
 import UNIV2PairAbi from './abi/uni_v2_lp.json'
 import WETHAbi from './abi/weth.json'
+import GOVAbi from  './abi/gov.json'
+
 import {
   contractAddresses,
   SUBTRACT_GAS_LIMIT,
@@ -26,6 +28,8 @@ export class Contracts {
     this.weth = new this.web3.eth.Contract(WETHAbi)
     this.ethusd = new this.web3.eth.Contract(UNIV2PairAbi)
     this.pheezezeth = new this.web3.eth.Contract(UNIV2PairAbi)  //Provitional
+    this.gov = new this.web3.eth.Contract(GOVAbi)
+
 
     this.pools = supportedPools.map((pool) =>
       Object.assign(pool, {
@@ -51,6 +55,8 @@ export class Contracts {
     setProvider(this.weth, contractAddresses.weth[networkId])
     setProvider(this.ethusd, contractAddresses.ethusd[networkId])
     setProvider(this.pheezezeth, contractAddresses.pheezezeth[networkId])
+    setProvider(this.gov, contractAddresses.gov[networkId])
+
 
     this.pools.forEach(
       ({ lpContract, lpAddress, tokenContract, tokenAddress }) => {
@@ -58,6 +64,11 @@ export class Contracts {
         setProvider(tokenContract, tokenAddress)
       },
     )
+    this.names = {};
+    this.names[contractAddresses.pheezez[networkId]] = "PHEEZEZ Token";
+    this.names[contractAddresses.digester[networkId]] = "Digester";
+    this.names[contractAddresses.timelock[networkId]] = "Timelock";
+    this.names[contractAddresses.gov[networkId]] = "Governor";
   }
 
   setDefaultAccount(account) {

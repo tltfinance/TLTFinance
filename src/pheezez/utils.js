@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+import Web3 from 'web3'
 
 BigNumber.config({
   EXPONENTIAL_AT: 1000,
@@ -92,7 +93,7 @@ export const getCurrentTokensPerBlock = async (digesterContract) => {
 export const calculateTokenUSDValue = async (ethUsdContract, pheezezEthContract) => {
   const reserves = await ethUsdContract.methods.getReserves().call()
   const reserves2 = await pheezezEthContract.methods.getReserves().call()
-  const ethusd = reserves['_reserve1'] / reserves['_reserve0'] * Math.pow(10,18-6);  // cause USD uses 6 decimal
+  const ethusd = reserves['_reserve1'] / reserves['_reserve0'] * Math.pow(10, 18 - 6);  // cause USD uses 6 decimal
   const pheezezeth = reserves2['_reserve1'] / reserves2['_reserve0'];  //ETH/Pheezez
   //console.log("TOKEN PRICE", ethusd, pheezezeth, reserves2, reserves2)
   const pheezezUSD = pheezezeth * ethusd
@@ -102,7 +103,7 @@ export const calculateTokenUSDValue = async (ethUsdContract, pheezezEthContract)
 //Convert ETH to USD price
 export const calculateEtherUSDValue = async (ethUsdContract) => {
   const reserves = await ethUsdContract.methods.getReserves().call()
-  const ethusd = reserves['_reserve1'] / reserves['_reserve0'] * Math.pow(10,18-6); // cause USD uses 6 decimal
+  const ethusd = reserves['_reserve1'] / reserves['_reserve0'] * Math.pow(10, 18 - 6); // cause USD uses 6 decimal
   //console.log("ETH PRICE", ethusd)
   return ethusd
 }
@@ -123,8 +124,8 @@ export const getTotalLPWethValue = async (
     .call()
   //Get balance of pheezez in the pool (Not eth)
   const pheezezAmountWholeLP = await pheezezContract.methods
-  .balanceOf(lpContract.options.address)
-  .call()
+    .balanceOf(lpContract.options.address)
+    .call()
   const tokenDecimals = await tokenContract.methods.decimals().call()
   // Get the share of lpContract that digesterContract owns
   const balance = await lpContract.methods
@@ -149,8 +150,8 @@ export const getTotalLPWethValue = async (
     .div(new BigNumber(10).pow(tokenDecimals))
   // Calculate the whole staked pheezezAmount value (Think about the half value of a LP pool in Pheezez Value)
   const pheezezAmount = new BigNumber(pheezezAmountWholeLP)
-  .times(portionLp)
-  .div(new BigNumber(10).pow(18))
+    .times(portionLp)
+    .div(new BigNumber(10).pow(18))
   // Calculate the whole wethAmount staked (Think about the half value of a LP pool represented in Ether Value)
   const wethAmount = new BigNumber(lpContractWeth)
     .times(portionLp)
@@ -236,4 +237,292 @@ export const redeem = async (digesterContract, account) => {
   } else {
     alert('pool not active')
   }
+}
+export const waitTransaction = async (provider, txHash) => {
+  const web3 = new Web3(provider)
+  let txReceipt = null
+  while (txReceipt === null) {
+    const r = await web3.eth.getTransactionReceipt(txHash)
+    txReceipt = r
+    await sleep(2000)
+  }
+  return (txReceipt.status)
+}
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+
+export const getPools = (pheezez) => {
+  return pheezez
+    ? pheezez.contracts.pools.map(
+      ({
+        pid,
+        name,
+        lpAddress,
+      }) => ({
+        pid,
+        name,
+        lpTokenAddress: lpAddress,
+      }),
+    )
+    : []
+}
+
+
+export const encodeABI = (pheezez, parameters, action) => {
+  if (action === "delete" || "update") {
+
+    let result = pheezez.web3.eth.abi.encodeParameters(['uint256', 'uint256', 'bool'], parameters)
+    return result
+  }
+  else if (action === "add") {
+    let result = pheezez.web3.eth.abi.encodeParameters(['uint256', 'address', 'bool'], parameters)
+    return result
+  }
+
+}
+export const propose = async (pheezez, targets, values, signatures, callbytes, description, account, onTxHash) => {
+
+  //console.log("PROPOSAL", targets, values, signatures, callbytes, description)
+  return pheezez.contracts.gov
+    .methods
+    .propose(targets, values, signatures, callbytes, description).send(
+      { from: account, gas: 400000 },
+      async (error, txHash) => {
+        if (error) {
+          onTxHash && onTxHash('')
+          console.log("Proposal error", error)
+          return false
+        }
+        onTxHash && onTxHash(txHash)
+        const status = await waitTransaction(pheezez.web3.eth, txHash)
+        if (!status) {
+          console.log("Proposal transaction failed.")
+          return false
+        }
+        return true
+      })
+}
+
+export const queueProposal = async (pheezez, proposal, account, onTxHash) => {
+  return pheezez.contracts.gov
+    .methods
+    .queue(proposal).send(
+      { from: account, gas: 200000 },
+      async (error, txHash) => {
+        if (error) {
+          onTxHash && onTxHash('')
+          console.log("Queue error", error)
+          return false
+        }
+        onTxHash && onTxHash(txHash)
+        const status = await waitTransaction(pheezez.web3.eth, txHash)
+        if (!status) {
+          console.log("Queue transaction failed.")
+          return false
+        }
+        return true
+      })
+}
+
+export const cancelProposal = async (pheezez, proposal, account, onTxHash ) => {
+  return pheezez.contracts.gov
+    .methods
+    .cancel(proposal).send(
+      { from: account, gas: 200000 },
+      async (error, txHash) => {
+        if (error) {
+          onTxHash && onTxHash('')
+          console.log("Cancel error", error)
+          return false
+        }
+        onTxHash && onTxHash(txHash)
+        const status = await waitTransaction(pheezez.web3.eth, txHash)
+        if (!status) {
+          console.log("Cancel transaction failed.")
+          return false
+        }
+        return true
+      })
+}
+
+export const executeProposal = async (pheezez, proposal, account, onTxHash) => {
+  return pheezez.contracts.gov
+    .methods
+    .execute(proposal).send(
+      { from: account, gas: 300000 },
+      async (error, txHash) => {
+        if (error) {
+          onTxHash && onTxHash('')
+          console.log("Execute error", error)
+          return false
+        }
+        onTxHash && onTxHash(txHash)
+        const status = await waitTransaction(pheezez.web3.eth, txHash)
+        if (!status) {
+          console.log("Execute transaction failed.")
+          return false
+        }
+        return true
+      })
+}
+export const vote = async (pheezez, proposal, side, account, onTxHash) => {
+  return pheezez.contracts.gov
+    .methods
+    .castVote(proposal, side).send(
+      { from: account, gas: 200000 },
+      async (error, txHash) => {
+        if (error) {
+          onTxHash && onTxHash('')
+          console.log("Vote error", error)
+          return false
+        }
+        onTxHash && onTxHash(txHash)
+        const status = await waitTransaction(pheezez.web3.eth, txHash)
+        if (!status) {
+          console.log("Vote transaction failed.")
+          return false
+        }
+        return true
+      })
+}
+
+const stateMap = {
+  0: "Pending",
+  1: "Active",
+  2: "Canceled",
+  3: "Defeated",
+  4: "Succeeded",
+  5: "Queued",
+  6: "Expired",
+  7: "Executed"
+}
+
+export const getProposals = async (pheezez) => {
+  let BASE18 = new BigNumber(10).pow(18);
+
+  ///Change blocks
+
+  const tltProposals = await pheezez.contracts.gov.getPastEvents("ProposalCreated", { fromBlock: 7270000, toBlock: 'latest' }) //change
+
+  let proposals = [];
+  let tltlDescriptions = [];
+  for (let i = 0; i < tltProposals.length; i++) {
+
+    let id = tltProposals[i]["returnValues"]["id"];
+    let targets = [];
+    for (let j = 0; j < tltProposals[i]["returnValues"]["targets"].length; j++) {
+      if (pheezez.contracts.names[tltProposals[i]["returnValues"]["targets"][j]]) {
+        targets.push(pheezez.contracts.names[tltProposals[i]["returnValues"]["targets"][j]]);
+      } else {
+        targets.push(tltProposals[i]["returnValues"]["targets"][j]);
+      }
+    }
+
+    let sigs = [];
+    for (let j = 0; j < tltProposals[i]["returnValues"]["signatures"].length; j++) {
+      if (pheezez.contracts.names[tltProposals[i]["returnValues"]["signatures"][j]]) {
+        sigs.push(pheezez.contracts.names[tltProposals[i]["returnValues"]["signatures"][j]]);
+      } else {
+        sigs.push(tltProposals[i]["returnValues"]["signatures"][j]);
+      }
+    }
+
+    let ins = [];
+    for (let j = 0; j < tltProposals[i]["returnValues"]["calldatas"].length; j++) {
+      let abi_types = tltProposals[i]["returnValues"]["signatures"][j].split("(")[1].split(")").slice(0, -1)[0].split(",");
+      try {
+        let result = pheezez.web3.eth.abi.decodeParameters(abi_types, tltProposals[i]["returnValues"]["calldatas"][j]);
+        let fr = []
+        for (let k = 0; k < result.__length__; k++) {
+          fr.push(result[k.toString()]);
+        }
+        ins.push(fr);
+
+      }
+      catch (e) {
+        ins.push(["Invalid proposal values"])
+      }
+
+    }
+
+    let proposal = await pheezez.contracts.gov.methods.proposals(id).call();
+
+    let fv = new BigNumber(proposal["forVotes"]).div(BASE18);
+    let av = new BigNumber(proposal["againstVotes"]).div(BASE18);
+    let quorum = new BigNumber(proposal["quorumatPropose"]).div(BASE18);
+    let eta = new BigNumber(proposal["eta"]);
+
+
+
+    proposals.push({
+      gov: "gov",
+      description: tltProposals[i]["returnValues"]["description"],
+      state: stateMap[await pheezez.contracts.gov.methods.state(id).call()],
+      targets: targets,
+      signatures: sigs,
+      inputs: ins,
+      forVotes: fv.toNumber(),
+      againstVotes: av.toNumber(),
+      id: id,
+      start: tltProposals[i]["returnValues"]["startBlock"],
+      end: tltProposals[i]["returnValues"]["endBlock"],
+      hash: tltProposals[i]["transactionHash"],
+      quorumatPropose: quorum.toNumber(),
+      eta: eta.toNumber(),
+    });
+  }
+
+  // proposals[1].state = "Active"
+  // proposals[0].state = "Active"
+  return proposals;
+}
+export const getThreshold = async (pheezez) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  return new BigNumber(await pheezez.contracts.gov.methods.proposalThreshold().call()).dividedBy(BASE18).toNumber()
+}
+
+//change block implementation.
+export const obtainPriorVotes = async (pheezez, account, block) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  return new BigNumber(await pheezez.contracts.pheezez.methods.getPriorVotes(account, block).call()).dividedBy(BASE18).toNumber()
+}
+
+export const latestProposal = async (pheezez, account) => {
+  return await pheezez.contracts.gov.methods.latestProposalIds(account).call()
+}
+export const getVotingPowers = async (pheezez, proposals, account) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  let powers = []
+  for (let i = 0; i < proposals.length; i++) {
+    if (proposals[i].gov === "gov") {
+      let receipt = await
+        pheezez.contracts.gov.methods.getReceipt(proposals[i].id, account).call();
+      let power = new BigNumber(receipt[2]).div(BASE18).toNumber();
+      if (power === 0) {
+        power = new BigNumber(await
+          pheezez.contracts.pheezez.methods.getPriorVotes(account, proposals[i].start).call()
+        ).div(BASE18).toNumber();
+      }
+      powers.push({
+        hash: proposals[i].hash,
+        power: power,
+        voted: receipt[0],
+        side: receipt[1]
+      })
+    }
+  }
+  return powers;
+}
+
+export const getCurrentVotingPower = async (pheezez, account) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  return new BigNumber(await pheezez.contracts.pheezez.methods.getCurrentVotes(account).call()).dividedBy(BASE18).toNumber()
+}
+
+export const getVotes = async (pheezez) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  const votesRaw = new BigNumber(await pheezez.contracts.pheezez.methods.votesAvailable().call()).dividedBy(BASE18).toNumber()
+  return votesRaw
 }

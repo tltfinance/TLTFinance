@@ -1,0 +1,20 @@
+
+
+PROPOSAL FRONT END. (Data types for the proposal)
+**Action Time completion**
+**Help and Tutorial for what is a proposal**
+**Validate the addresses**
+**Reason of failure**
+
+
+---Feedback for the user---
+
+
+...> DIGESTER
+**Add pools**
+-add
++uint256
++address
++bool
+
+**Modify **
