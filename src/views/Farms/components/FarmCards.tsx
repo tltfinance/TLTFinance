@@ -39,7 +39,7 @@ const FarmCards: React.FC = () => {
   //console.log("PRIZZZEEEE", tokenPrice.toNumber(), pheezezIndex)
 
   const BLOCKS_PER_YEAR = new BigNumber(2336000)
-  const PHEEZEZ_PER_BLOCK = new BigNumber(100) //Update this, get them from the contract!!!
+  const PHEEZEZ_PER_BLOCK = new BigNumber(50) //Update this, get them from the contract!!!
 
   const rows = farms.reduce<FarmWithStakedValue[][]>(
     (farmRows, farm, i) => {
