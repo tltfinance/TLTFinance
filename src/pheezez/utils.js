@@ -100,6 +100,7 @@ export const calculateTokenUSDValue = async (ethUsdContract, pheezezEthContract)
   return pheezezUSD
 }
 
+
 //Convert ETH to USD price
 export const calculateEtherUSDValue = async (ethUsdContract) => {
   const reserves = await ethUsdContract.methods.getReserves().call()
@@ -491,6 +492,14 @@ export const obtainPriorVotes = async (pheezez, account, block) => {
 
 export const latestProposal = async (pheezez, account) => {
   return await pheezez.contracts.gov.methods.latestProposalIds(account).call()
+}
+
+export const proposalEnd = async (block) => {
+  const response = await fetch(`https://api.etherscan.io/api?module=block&action=getblockcountdown&blockno=${block}&apikey=6STBMXJ1868UD2EFQYMTK6DNFH24PVB74K`);
+  const myJson = await response.json(); //extract JSON from the http response
+  console.log(myJson.result.EstimateTimeInSec)
+  return myJson.result.EstimateTimeInSec
+  // do something with myJson
 }
 export const getVotingPowers = async (pheezez, proposals, account) => {
   let BASE18 = new BigNumber(10).pow(18);

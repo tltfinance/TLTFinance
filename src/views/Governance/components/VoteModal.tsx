@@ -20,7 +20,7 @@ import useGovernance from '../../../hooks/useGovernance'
 import { useWallet } from 'use-wallet'
 import { Proposal } from "../../../contexts/Governance/types"
 import Split from '../../../components/Split'
-import {latestProposal} from '../../../pheezez/utils'
+import {latestProposal, proposalEnd} from '../../../pheezez/utils'
 
 interface VoteModalProps extends ModalProps {
   prop: Proposal,
@@ -45,6 +45,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
   const [priorProposal, setPriorProposal] = useState(0)
   const [percFor, setpercFor] = useState(0)
   const [percAgainst, setpercAgainst] = useState(0)
+  const [propEndtime, setpropEndtime] = useState(0)
   
 
   const handleVoteClickTrue = useCallback(async () => {
@@ -80,6 +81,16 @@ const VoteModal: React.FC<VoteModalProps> = ({
   }, [pheezez, setPriorProposal])
 
   useEffect(() => {
+    async function fetchProposalEndTime() {
+      const endTime = await proposalEnd(prop.end)
+      setpropEndtime(endTime)
+    }
+    if (pheezez) {
+      fetchProposalEndTime()
+    }
+  }, [pheezez, setpropEndtime])
+
+  useEffect(() => {
   if (prop.forVotes || prop.againstVotes != 0)
   {
   setpercFor(prop.forVotes / (prop.forVotes + prop.againstVotes) * 100)
@@ -112,7 +123,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
     return (
       <>
       <StyledCounter>
-      Remaining Queue Time
+      {(prop.state === "Queued" ? "Remaining Queue Time" : "Voting Period ends in")}
       </StyledCounter>
       <StyledCounter>
         {paddedDays} Days {paddedHours} Hours {paddedMinutes} Minutes {paddedSeconds} Seconds
@@ -135,6 +146,17 @@ const VoteModal: React.FC<VoteModalProps> = ({
            </>
 
           )
+          ||
+          (prop.state === "Active") && (
+            <>
+              {console.log(propEndtime, Date.now())}
+              <Countdown
+              date={Date.now()+ propEndtime* 1000}
+              renderer={renderer}
+            />
+             </>
+  
+            )
         }
       <ModalContent>
         <div>
