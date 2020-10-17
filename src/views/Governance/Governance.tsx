@@ -62,7 +62,7 @@ const Governance: React.FC = () => {
         <>
           <PageHeader
             icon={<i className="fas fa-toilet-paper" />}
-            title="Create prosals, vote and grow the Community!"
+            title="Create proposals, vote and grow the Community!"
           />
           <Container>
             <Spacer size="md" />
