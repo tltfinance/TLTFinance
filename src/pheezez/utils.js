@@ -63,7 +63,7 @@ export const getFarms = (pheezez) => {
         tokenAddress,
         tokenSymbol,
         tokenContract,
-        earnToken: 'pheezez',
+        earnToken: 'PHZT',
         earnTokenAddress: pheezez.contracts.pheezez.options.address,
         icon,
         icon2,
