@@ -39,7 +39,7 @@ const FarmCards: React.FC = () => {
   //console.log("PRIZZZEEEE", tokenPrice.toNumber(), pheezezIndex)
 
   const BLOCKS_PER_YEAR = new BigNumber(2336000)
-  const PHEEZEZ_PER_BLOCK = new BigNumber(50) //Update this, get them from the contract!!!
+  const PHEEZEZ_PER_BLOCK = new BigNumber(25) //Update this, get them from the contract!!!
 
   const rows = farms.reduce<FarmWithStakedValue[][]>(
     (farmRows, farm, i) => {
@@ -136,28 +136,28 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   let mult: string
   switch (farm.tokenSymbol) {
     case 'PHZT':
-      mult = '10x'
+      mult = '5x'
       break
     case 'USDT':
-      mult = '2x'
+      mult = '1x'
       break
     case 'KIMCHI':
-      mult = '3x'
+      mult = '1.5x'
       break
     case 'GODKIMCHI':
-      mult = '4x'
+      mult = '2x'
       break
     case 'PICKLE':
-      mult = '5x'
+      mult = '2.5x'
       break
     case 'SHROOM':
-      mult = '5x'
+      mult = '2.5x'
       break
     case 'SUSHI':
-      mult = '6x'
+      mult = '3x'
       break
     case 'SAKE':
-      mult = '6x'
+      mult = '3x'
       break
     case 'PADTHAI':
       mult = '1x'

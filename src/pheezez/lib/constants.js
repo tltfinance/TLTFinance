@@ -197,19 +197,4 @@ export const supportedPools = [
     icon2: require("../../assets/img/sake-logo.svg"),
     unipool: "https://app.uniswap.org/#/add/0x066798d9ef0833ccc719076Dab77199eCbd178b0/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
-  {
-    pid: 9,
-    lpAddresses: {
-      1: '0x1887d431e6a0e276e6bd8b6458740266e422040b',
-    },
-    tokenAddresses: {
-      1: '0x6f450f117114075D1D1C91dD64a61C0bA72ca68F',
-    },
-    name: 'PHZT-PADTHAI',
-    symbol: 'PHZT-PADTHAI LP',
-    tokenSymbol: 'PADTHAI',
-    icon: require("../../assets/img/tokenLogo.svg"),
-    icon2: require("../../assets/img/padthai-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0x6f450f117114075D1D1C91dD64a61C0bA72ca68F/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
-  },
 ]
