@@ -11,6 +11,10 @@ const StyledModalContent = styled.div`
     flex: 1;
     overflow: auto;
   }
+  @media screen and (max-height: ${(props) => props.theme.breakpoints.smallScreen}px) {
+    flex: 1;
+    overflow: auto;
+  }
 `
 
 export default ModalContent

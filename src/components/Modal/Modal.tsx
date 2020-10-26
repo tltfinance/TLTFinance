@@ -39,15 +39,26 @@ const StyledResponsiveWrapper = styled.div`
   position: fixed;
   width: 100%;
   max-width: 512px;
+  @media screen and (max-height: ${(props) => props.theme.breakpoints.smallScreen}px) {
+    flex: 1;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+    max-height: calc(100% - ${(props) => props.theme.spacing[1]}px);
+  }
   @media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {
     flex: 1;
-    position: absolute;
+    position: fixed;
     top: 100%;
     right: 0;
     left: 0;
     max-height: calc(100% - ${(props) => props.theme.spacing[4]}px);
     animation: ${mobileKeyframes} 0.3s forwards ease-out;
   }
+
 `
 
 const StyledModal = styled.div`
