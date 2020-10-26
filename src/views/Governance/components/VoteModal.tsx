@@ -133,7 +133,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
   }
 
   return (
-    <Modal>
+    <Modal size = "large">
       <ModalTitle text="Proposal Overview" />
       {
           (prop.state === "Queued") && (prop.eta * 1000 > Date.now()) && (
@@ -158,7 +158,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
   
             )
         }
-      <ModalContent>
+      <ModalContent size = "large">
         <div>
         { (voted) && (
           <>

@@ -1,21 +1,39 @@
-import React from 'react'
-import styled, { keyframes } from 'styled-components'
-import ReactDOM from "react-dom";
+import React, {useContext} from 'react'
+import styled, { keyframes, ThemeContext } from 'styled-components'
+import ReactDOM from "react-dom"
 
 export interface ModalProps {
-  onDismiss?: () => void
+  onDismiss?: () => void,
+  size?: 'large' | 'normal'
 }
 
-const Modal: React.FC = ({ children }) => {
+const Modal: React.FC<ModalProps> = ({ children, size }) => {
+  const { breakpoints } = useContext(ThemeContext)
+  let size1: string
+  let size2: string
+  switch (size) {
+    case 'large':
+      size1 = breakpoints.smallScreen
+      size2 = breakpoints.mobile
+      break
+    case 'normal':
+    default:
+      size1 = breakpoints.mobile
+      size2 = breakpoints.mobile
+  }
   return ReactDOM
-  .createPortal (
-    <StyledResponsiveWrapper>
-      <StyledModal>{children}</StyledModal>
-    </StyledResponsiveWrapper>,
-   document.querySelector("#modal") 
-  );
+    .createPortal(
+      <StyledResponsiveWrapper big={size1} regular={size2}>
+        <StyledModal>{children}</StyledModal>
+      </StyledResponsiveWrapper>,
+      document.querySelector("#modal")
+    );
 }
 
+interface ModalVariantProps {
+  big: string,
+  regular: string
+}
 
 const mobileKeyframes = keyframes`
   0% {
@@ -26,7 +44,7 @@ const mobileKeyframes = keyframes`
   }
 `
 
-const StyledResponsiveWrapper = styled.div`
+const StyledResponsiveWrapper = styled.div<ModalVariantProps>`
   z-index: 3;
   top: 50%;
   left: 50%;
@@ -39,7 +57,7 @@ const StyledResponsiveWrapper = styled.div`
   position: fixed;
   width: 100%;
   max-width: 512px;
-  @media screen and (max-height: ${(props) => props.theme.breakpoints.smallScreen}px) {
+  @media screen and (max-height: ${(props) => props.big}px) {
     flex: 1;
     position: fixed;
     top: 50%;
@@ -49,7 +67,7 @@ const StyledResponsiveWrapper = styled.div`
     align-items: center;
     max-height: calc(100% - ${(props) => props.theme.spacing[1]}px);
   }
-  @media (max-width: ${(props) => props.theme.breakpoints.mobile}px) {
+  @media (max-width: ${(props) => props.regular}px) {
     flex: 1;
     position: fixed;
     top: 100%;
