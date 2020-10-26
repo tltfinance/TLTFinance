@@ -16,15 +16,15 @@ const Nav: React.FC = () => {
       >
         Pheezez Contract
       </StyledLink>
-      <StyledLink target="_blank" href="https://discord.gg/2gqv8RB">
-        Discord
-      </StyledLink>
-      <StyledLink target="_blank" href="https://twitter.com/FinanceTlt">
-        Twitter
-      </StyledLink>
-      <StyledLink target="_blank" href="https://t.me/joinchat/AAAAAFVvXY1iX06x0Pht3g">
-        Telegram
-      </StyledLink>
+      <StyledLink2 target="_blank" href="https://discord.gg/2gqv8RB">
+      <i className="fab fa-discord"></i>
+      </StyledLink2>
+      <StyledLink2 target="_blank" href="https://twitter.com/FinanceTlt">
+      <i className="fab fa-twitter-square"></i>
+      </StyledLink2>
+      <StyledLink2 target="_blank" href="https://t.me/joinchat/AAAAAFVvXY1iX06x0Pht3g">
+      <i className="fab fa-telegram"></i>
+      </StyledLink2>
     </StyledNav>
   )
 }
@@ -37,6 +37,17 @@ const StyledNav = styled.nav`
 const StyledLink = styled.a`
   color: ${(props) => props.theme.color.grey[700]};
   font-size: 1.2rem;
+  padding-left: ${(props) => props.theme.spacing[3]}px;
+  padding-right: ${(props) => props.theme.spacing[3]}px;
+  text-decoration: none;
+  &:hover {
+    color: ${(props) => props.theme.color.grey[906]};
+  }
+`
+
+const StyledLink2 = styled.a`
+  color: ${(props) => props.theme.color.grey[700]};
+  font-size: 1.8rem;
   padding-left: ${(props) => props.theme.spacing[3]}px;
   padding-right: ${(props) => props.theme.spacing[3]}px;
   text-decoration: none;
