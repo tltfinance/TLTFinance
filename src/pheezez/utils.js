@@ -270,6 +270,37 @@ export const getPools = (pheezez) => {
     : []
 }
 
+export const createUNIPAIR = async (pheezez, tokenAddress, account, onTxHash) => {
+
+  console.log("PROPOSAL", pheezez.pheezezAddress, tokenAddress, pheezez.contracts.unifactory
+  .methods)
+  let result = await pheezez.contracts.unifactory
+    .methods
+    .createPair(tokenAddress, pheezez.pheezezAddress).send(
+      { from: account, gas: 3747564 },
+      async (error, txHash) => {
+        if (error) {
+          onTxHash && onTxHash('')
+          console.log("Pair Creation error", error)
+          return false
+        }
+        onTxHash && onTxHash(txHash)
+        const status = await waitTransaction(pheezez.web3.eth, txHash)
+        if (!status) {
+          console.log("Pair Creation transaction failed.")
+          return false
+        }
+        return true
+      })
+  if (result != null)
+  {
+    return result.events.PairCreated.returnValues.pair
+  }
+  else
+  {
+    return "error"
+  }
+}
 
 export const encodeABI = (pheezez, parameters, action) => {
   if (action === "delete" || "update") {

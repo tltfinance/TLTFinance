@@ -1,32 +1,21 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import Dropdown from 'react-dropdown'
-import 'react-dropdown/style.css';
-import { Line } from 'rc-progress'
-import BigNumber from 'bignumber.js'
-import numeral from 'numeral'
-import Card from '../../../components/Card'
+import 'react-dropdown/style.css'
 import CardContent from '../../../components/CardContent'
 import Button from '../../../components/Button'
-import CardIcon from '../../../components/CardIcon'
-import Label from '../../../components/Label'
 import Modal, { ModalProps } from '../../../components/Modal'
 import ModalActions from '../../../components/ModalActions'
 import ModalContent from '../../../components/ModalContent'
 import ModalTitle from '../../../components/ModalTitle'
-import Spacer from '../../../components/Spacer'
-import Separator from '../../../components/Separator'
 import styled from 'styled-components'
 import usePheezez from '../../../hooks/usePheezez'
-import useGovernance from '../../../hooks/useGovernance'
 import { useWallet } from 'use-wallet'
-import { Proposal } from "../../../contexts/Governance/types"
 import Split from '../../../components/Split'
 import ErasePool from './ErasePool'
 import UpdatePool from './UpdatePool'
 import AddPool from './AddPool'
 import { getThreshold, obtainPriorVotes, getDigesterAddress } from '../../../pheezez/utils'
 import useBlock from '../../../hooks/useBlock'
-import { setTransactions } from '../../../contexts/Transactions/reducer';
 
 interface ProposalModalProps extends ModalProps {
   onConfirm: (targets: string[], values: number[], signatures: string[], inputs: string[], action: string, description?: string) => void

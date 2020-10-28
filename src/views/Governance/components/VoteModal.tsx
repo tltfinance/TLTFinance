@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import Countdown, { CountdownRenderProps } from 'react-countdown'
+import { Scrollbars } from 'react-custom-scrollbars'
 import { Line } from 'rc-progress';
 import BigNumber from 'bignumber.js'
 import numeral from 'numeral'
@@ -158,6 +159,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
   
             )
         }
+    
       <ModalContent size = "large">
         <div>
         { (voted) && (
@@ -260,6 +262,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
         </Card>
         </StyledCardWrapper>
       </ModalContent>
+      
       <ModalActions>
         <Button
           onClick={onDismiss}

@@ -5,9 +5,11 @@ import PheezezAbi from './abi/pheezez.json'
 import UNIV2PairAbi from './abi/uni_v2_lp.json'
 import WETHAbi from './abi/weth.json'
 import GOVAbi from  './abi/gov.json'
+import UNIFACTAbi from './abi/unifactory.json'
 
 import {
   contractAddresses,
+  addressMap,
   SUBTRACT_GAS_LIMIT,
   supportedPools,
 } from './constants.js'
@@ -29,7 +31,7 @@ export class Contracts {
     this.ethusd = new this.web3.eth.Contract(UNIV2PairAbi)
     this.pheezezeth = new this.web3.eth.Contract(UNIV2PairAbi)  //Provitional
     this.gov = new this.web3.eth.Contract(GOVAbi)
-
+    this.unifactory = new this.web3.eth.Contract(UNIFACTAbi)
 
     this.pools = supportedPools.map((pool) =>
       Object.assign(pool, {
@@ -56,6 +58,7 @@ export class Contracts {
     setProvider(this.ethusd, contractAddresses.ethusd[networkId])
     setProvider(this.pheezezeth, contractAddresses.pheezezeth[networkId])
     setProvider(this.gov, contractAddresses.gov[networkId])
+    setProvider(this.unifactory, addressMap.uniswapFactoryV2)
 
 
     this.pools.forEach(
