@@ -121,7 +121,7 @@ const AddPool: React.FC<AddPoolProps> = ({
             <Block>
               <Button
                 disabled={lpValue === "" ? true : pendingTx}
-                text={pendingTx ? 'Pending Confirmation' : 'Create UNISWAP Pair'}
+                text={pendingTx ? 'Pending Confirmation' : 'Create Uniswap Pair'}
                 onClick={async () => {
                   
                   await handleUNISWAP(lpValue)
