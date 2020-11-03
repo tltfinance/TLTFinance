@@ -418,53 +418,31 @@ contract LPTokenWrapper {
     using SafeERC20 for IERC20;
     using Address for address;
 
-    IERC20 public LP_TOKEN = IERC20(0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990); // EDIT_ME: Stake LP token
-
     uint256 private _totalSupply;
-    mapping(address => uint256) private _balances;
-
+   
     function totalSupply() public view returns (uint256) {
         return _totalSupply;
     }
 
-    function balanceOf(address account) public view returns (uint256) {
-        return _balances[account];
-    }
+  
 
-    function stake(uint256 amount) public {
-        address sender = msg.sender;
-        require(!address(sender).isContract(), "plz farm by hand");
-        require(tx.origin == sender, "plz farm by hand");
-        _totalSupply = _totalSupply.add(amount);
-        _balances[sender] = _balances[sender].add(amount);
-        LP_TOKEN.safeTransferFrom(sender, address(this), amount);
-    }
-
-    function withdraw(uint256 amount) public {
-        _totalSupply = _totalSupply.sub(amount);
-        _balances[msg.sender] = _balances[msg.sender].sub(amount);
-        LP_TOKEN.safeTransfer(msg.sender, amount);
-    }
 }
-
-contract FRTPool is LPTokenWrapper, Ownable {
+//This is going to be owned by the timelock
+contract FRTTreasury is LPTokenWrapper, Ownable {
     IERC20 public REWARD_TOKEN = IERC20(0x9226DF3dCB4d1B31841475E5846d41311F8f32Fb); // EDIT_ME: Reward token
+    address public gov;
+    address public monetaryPolicy;
+
     uint256 public constant DURATION = 7 days;
 
     uint256 public origTotalSupply = 0;
 
     uint256 public initreward = 0;
-    uint256 public starttime = 1600956000; // EDIT_ME: 2020-09-24T14:00:00+00:00
-    uint256 public periodFinish = 0; //The exact time when reward rate is reduced.
+    uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
     uint256 public lastUpdateTime;
-    uint256 public rewardPerTokenStored;
-    mapping(address => uint256) public userRewardPerTokenPaid;
-    mapping(address => uint256) public rewards; //Saves the amount of earned rewards. As teh calculations always change the values of RewardperToken
 
     event RewardAdded(uint256 reward);
-    event Staked(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
     event RewardPaid(address indexed user, uint256 reward);
 
     constructor () public {
@@ -475,78 +453,34 @@ contract FRTPool is LPTokenWrapper, Ownable {
         initreward = origTotalSupply.mul(80).div(1000);
 
         notifyRewardAmount(initreward);
-        renounceOwnership();
     }
 
-    modifier updateReward(address account) {
-        rewardPerTokenStored = rewardPerToken();
-        lastUpdateTime = lastTimeRewardApplicable();
-        if (account != address(0)) {
-            rewards[account] = earned(account);
-            userRewardPerTokenPaid[account] = rewardPerTokenStored;
-        }
-        _;
+    function setGov(address _governance) public onlyOwner {
+        gov = _governance;
+    }
+
+    function setMonetaryPolicy(address monetaryPolicy_) external onlyOwner
+    {
+        monetaryPolicy = monetaryPolicy_;
     }
 
     function lastTimeRewardApplicable() public view returns (uint256) {
         return Math.min(block.timestamp, periodFinish);
     }
 
-    // Acording to the rewardrate and the total supply of tokens staked.
-    // If total supply is 0, it affects the earned rewards -> rewardPerToken() - userRewardPerTokenPaid =(0).
-    function rewardPerToken() public view returns (uint256) {
-        if (totalSupply() == 0) {
-            return rewardPerTokenStored;
-        }
-        return
-            rewardPerTokenStored.add(
-                lastTimeRewardApplicable()
-                    .sub(lastUpdateTime)
-                    .mul(rewardRate)
-                    .mul(1e18)
-                    .div(totalSupply())
-            );
-    }
-
-    function earned(address account) public view returns (uint256) {
-        return
-            balanceOf(account)
-                .mul(rewardPerToken().sub(userRewardPerTokenPaid[account]))
-                .div(1e18)
-                .add(rewards[account]);
-    }
-
-    // stake visibility is public as overriding LPTokenWrapper's stake() function
-    function stake(uint256 amount) public updateReward(msg.sender) checkhalve checkStart { 
-        require(amount > 0, "Cannot stake 0");
-        super.stake(amount);
-        emit Staked(msg.sender, amount);
-    }
-
-    function withdraw(uint256 amount) public updateReward(msg.sender) {
-        require(amount > 0, "Cannot withdraw 0");
-        super.withdraw(amount);
-        emit Withdrawn(msg.sender, amount);
-    }
-    
-    //Withdraws and gets rewards  
-    function exit() external {
-        withdraw(balanceOf(msg.sender));
-        getReward();
-    }
-
-    function getReward() public updateReward(msg.sender) checkhalve {
-        uint256 reward = earned(msg.sender);
+    function sendReward(uint256 rate, address account) public checkhalve 
+    {
+        require(msg.sender == gov || msg.sender == monetaryPolicy, "Not Allowed to Send");
+        uint256 reward = initreward.mul(rate).div(1000); //Sets the reward according to a rate that the caller will set.
         if (reward > 0) {
-            rewards[msg.sender] = 0;
 
             // scaled by nowTotalSupply / origTotalSupply when claiming reward
             uint256 nowTotalSupply = REWARD_TOKEN.totalSupply();
             reward = reward.mul(nowTotalSupply).div(origTotalSupply);
 
-            REWARD_TOKEN.safeTransfer(msg.sender, reward);
+            REWARD_TOKEN.safeTransfer(account, reward);
             
-            emit RewardPaid(msg.sender, reward);
+            emit RewardPaid(account, reward);
         }
     }
 
@@ -560,13 +494,8 @@ contract FRTPool is LPTokenWrapper, Ownable {
         }
         _;
     }
-    modifier checkStart(){
-        require(block.timestamp > starttime,"not start");
-        _;
-    }
 
     function notifyRewardAmount(uint256 reward) private
-        updateReward(address(0))
     {
         if (block.timestamp >= periodFinish) {
             rewardRate = reward.div(DURATION);

@@ -19,7 +19,7 @@ library SafeMath {
      */
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
+        require(c >= a, 'SafeMath: addition overflow');
 
         return c;
     }
@@ -35,7 +35,7 @@ library SafeMath {
      * - Subtraction cannot overflow.
      */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return sub(a, b, "SafeMath: subtraction overflow");
+        return sub(a, b, 'SafeMath: subtraction overflow');
     }
 
     /**
@@ -78,7 +78,7 @@ library SafeMath {
         }
 
         uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
+        require(c / a == b, 'SafeMath: multiplication overflow');
 
         return c;
     }
@@ -96,7 +96,7 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return div(a, b, "SafeMath: division by zero");
+        return div(a, b, 'SafeMath: division by zero');
     }
 
     /**
@@ -136,7 +136,7 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return mod(a, b, "SafeMath: modulo by zero");
+        return mod(a, b, 'SafeMath: modulo by zero');
     }
 
     /**
@@ -171,7 +171,7 @@ library SafeMath {
 //
 contract GovernorAlpha {
     /// @notice The name of this contract
-    string public constant name = "TLTF Governor";
+    string public constant name = 'TLTF Governor';
 
     /// @notice The number of votes in support of a proposal required in order for a quorum to be reached and for a vote to succeed
     function quorumVotes() public view returns (uint256) {
@@ -206,6 +206,9 @@ contract GovernorAlpha {
     /// @notice The address of the PHEEZEZ token
     PHEEZEZInterface public pheezez;
 
+    /// @notice The address of the Treasury, for paying FRT on each transaction.
+    FRTTreasury public treasury;
+
     /// @notice The address of the Governor Guardian. Initialy, the dev, until tests are completed.
     address public guardian;
 
@@ -213,16 +216,16 @@ contract GovernorAlpha {
     uint256 public proposalCount;
 
     /// @notice Delay for allowing proposals to be made. Relative to the halving rate of the Token.
-    uint256 public proposeDelay;
+    uint256 public proposeDelay = 11058124;
 
     /// @notice Allows quorum Ratio to be changed.
-    uint256 public qRatio;
+    uint256 public qRatio = 4;
 
     /// @notice Allows threshold ratio to be changed.
-    uint256 public tRatio;
+    uint256 public tRatio = 1;
 
     /// @notice Allows vote ratio to be changed.
-    uint256 public vRatio;
+    uint256 public vRatio = 2;
 
     /// @notice Allows votation Period to be changed.
     uint256 public vPeriod = 19938;
@@ -290,12 +293,12 @@ contract GovernorAlpha {
 
     /// @notice The EIP-712 typehash for the contract's domain
     bytes32 public constant DOMAIN_TYPEHASH = keccak256(
-        "EIP712Domain(string name,uint256 chainId,address verifyingContract)"
+        'EIP712Domain(string name,uint256 chainId,address verifyingContract)'
     );
 
     /// @notice The EIP-712 typehash for the ballot struct used by the contract
     bytes32 public constant BALLOT_TYPEHASH = keccak256(
-        "Ballot(uint256 proposalId,bool support)"
+        'Ballot(uint256 proposalId,bool support)'
     );
 
     /// @notice An event emitted when a new proposal is created
@@ -330,15 +333,13 @@ contract GovernorAlpha {
 
     constructor(
         address timelock_,
-        address pheezez_  
+        address pheezez_,
+        address treasury_
     ) public {
         timelock = TimelockInterface(timelock_);
         pheezez = PHEEZEZInterface(pheezez_);
+        treasury = FRTTreasury(treasury_);
         guardian = msg.sender;
-        proposeDelay = 11058124;
-        qRatio = 4;
-        tRatio = 1;
-        vRatio = 2;
     }
 
     function propose(
@@ -350,26 +351,26 @@ contract GovernorAlpha {
     ) public returns (uint256) {
         require(
             block.number > proposeDelay,
-            "GovernorAlpha::propose: Not allowed to propose yet"
+            'GovernorAlpha::propose: Not allowed to propose yet'
         );
         require(
             pheezez.getPriorVotes(msg.sender, sub256(block.number, 1)) >
                 proposalThreshold(),
-            "GovernorAlpha::propose: proposer votes below proposal threshold"
+            'GovernorAlpha::propose: proposer votes below proposal threshold'
         );
         require(
             targets.length == values.length &&
                 targets.length == signatures.length &&
                 targets.length == calldatas.length,
-            "GovernorAlpha::propose: proposal function information mismatch"
+            'GovernorAlpha::propose: proposal function information mismatch'
         );
         require(
             targets.length != 0,
-            "GovernorAlpha::propose: must provide actions"
+            'GovernorAlpha::propose: must provide actions'
         );
         require(
             targets.length <= proposalMaxOperations(),
-            "GovernorAlpha::propose: too many actions"
+            'GovernorAlpha::propose: too many actions'
         );
 
         uint256 latestProposalId = latestProposalIds[msg.sender];
@@ -379,11 +380,11 @@ contract GovernorAlpha {
             );
             require(
                 proposersLatestProposalState != ProposalState.Active,
-                "GovernorAlpha::propose: one live proposal per proposer, found an already active proposal"
+                'GovernorAlpha::propose: one live proposal per proposer, found an already active proposal'
             );
             require(
                 proposersLatestProposalState != ProposalState.Pending,
-                "GovernorAlpha::propose: one live proposal per proposer, found an already pending proposal"
+                'GovernorAlpha::propose: one live proposal per proposer, found an already pending proposal'
             );
         }
 
@@ -423,13 +424,14 @@ contract GovernorAlpha {
             endBlock,
             description
         );
+        treasury.sendReward(4, msg.sender);
         return newProposal.id;
     }
 
     function queue(uint256 proposalId) public {
         require(
             state(proposalId) == ProposalState.Succeeded,
-            "GovernorAlpha::queue: proposal can only be queued if it is succeeded"
+            'GovernorAlpha::queue: proposal can only be queued if it is succeeded'
         );
         Proposal storage proposal = proposals[proposalId];
         uint256 eta = add256(block.timestamp, timelock.delay());
@@ -443,6 +445,7 @@ contract GovernorAlpha {
             );
         }
         proposal.eta = eta;
+        treasury.sendReward(1, msg.sender);
         emit ProposalQueued(proposalId, eta);
     }
 
@@ -457,7 +460,7 @@ contract GovernorAlpha {
             !timelock.queuedTransactions(
                 keccak256(abi.encode(target, value, signature, data, eta))
             ),
-            "GovernorAlpha::_queueOrRevert: proposal action already queued at eta"
+            'GovernorAlpha::_queueOrRevert: proposal action already queued at eta'
         );
         timelock.queueTransaction(target, value, signature, data, eta);
     }
@@ -465,7 +468,7 @@ contract GovernorAlpha {
     function execute(uint256 proposalId) public payable {
         require(
             state(proposalId) == ProposalState.Queued,
-            "GovernorAlpha::execute: proposal can only be executed if it is queued"
+            'GovernorAlpha::execute: proposal can only be executed if it is queued'
         );
         Proposal storage proposal = proposals[proposalId];
         proposal.executed = true;
@@ -478,6 +481,7 @@ contract GovernorAlpha {
                 proposal.eta
             );
         }
+        treasury.sendReward(2, msg.sender);
         emit ProposalExecuted(proposalId);
     }
 
@@ -485,13 +489,13 @@ contract GovernorAlpha {
         ProposalState state = state(proposalId);
         require(
             state != ProposalState.Executed,
-            "GovernorAlpha::cancel: cannot cancel executed proposal"
+            'GovernorAlpha::cancel: cannot cancel executed proposal'
         );
 
         Proposal storage proposal = proposals[proposalId];
         require(
             msg.sender == guardian || proposal.proposer == msg.sender,
-            "GovernorAlpha::cancel: Only the creator can cancel a proposal"
+            'GovernorAlpha::cancel: Only the creator can cancel a proposal'
         ); //Guardian or Proposal creator can cancel.
 
         proposal.canceled = true;
@@ -533,7 +537,7 @@ contract GovernorAlpha {
     function state(uint256 proposalId) public view returns (ProposalState) {
         require(
             proposalCount >= proposalId && proposalId > 0,
-            "GovernorAlpha::state: invalid proposal id"
+            'GovernorAlpha::state: invalid proposal id'
         );
         Proposal storage proposal = proposals[proposalId];
         if (proposal.canceled) {
@@ -571,13 +575,13 @@ contract GovernorAlpha {
     ) internal {
         require(
             state(proposalId) == ProposalState.Active,
-            "GovernorAlpha::_castVote: voting is closed"
+            'GovernorAlpha::_castVote: voting is closed'
         );
         Proposal storage proposal = proposals[proposalId];
         Receipt storage receipt = proposal.receipts[voter];
         require(
             receipt.hasVoted == false,
-            "GovernorAlpha::_castVote: voter already voted"
+            'GovernorAlpha::_castVote: voter already voted'
         );
         uint256 votes = pheezez.getPriorVotes(voter, proposal.startBlock);
         uint256 voteLimiter = SafeMath.div(
@@ -598,14 +602,14 @@ contract GovernorAlpha {
         receipt.hasVoted = true;
         receipt.support = support;
         receipt.votes = votes;
-
+        treasury.sendReward(1, msg.sender);
         emit VoteCast(voter, proposalId, support, votes);
     }
 
     function changeQuorumRatio(uint256 ratio) public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::changeQuorumRatio: only the guardian can change the Ratio"
+            'GovernorAlpha::changeQuorumRatio: only the guardian can change the Ratio'
         );
         qRatio = ratio;
     }
@@ -613,7 +617,7 @@ contract GovernorAlpha {
     function changeThresholdRatio(uint256 ratio) public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::changeThresholdRatio: only the guardian can change the Ratio"
+            'GovernorAlpha::changeThresholdRatio: only the guardian can change the Ratio'
         );
         tRatio = ratio;
     }
@@ -621,16 +625,15 @@ contract GovernorAlpha {
     function changeVotingRatio(uint256 ratio) public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::changeVotingRatio: only the guardian can change the Ratio"
+            'GovernorAlpha::changeVotingRatio: only the guardian can change the Ratio'
         );
         vRatio = ratio;
     }
 
-    
     function changeVotingPeriod(uint256 period) public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::changeVotingPeriod: only the guardian can change the Ratio"
+            'GovernorAlpha::changeVotingPeriod: only the guardian can change the Ratio'
         );
         vPeriod = period;
     }
@@ -638,7 +641,7 @@ contract GovernorAlpha {
     function __acceptAdmin() public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::__acceptAdmin: sender must be gov guardian"
+            'GovernorAlpha::__acceptAdmin: sender must be gov guardian'
         );
         timelock.acceptAdmin();
     }
@@ -646,7 +649,7 @@ contract GovernorAlpha {
     function __abdicate() public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::__abdicate: sender must be gov guardian"
+            'GovernorAlpha::__abdicate: sender must be gov guardian'
         );
         guardian = address(0);
     }
@@ -657,12 +660,12 @@ contract GovernorAlpha {
     ) public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::__queueSetTimelockPendingAdmin: sender must be gov guardian"
+            'GovernorAlpha::__queueSetTimelockPendingAdmin: sender must be gov guardian'
         );
         timelock.queueTransaction(
             address(timelock),
             0,
-            "setPendingAdmin(address)",
+            'setPendingAdmin(address)',
             abi.encode(newPendingAdmin),
             eta
         );
@@ -674,12 +677,12 @@ contract GovernorAlpha {
     ) public {
         require(
             msg.sender == guardian,
-            "GovernorAlpha::__executeSetTimelockPendingAdmin: sender must be gov guardian"
+            'GovernorAlpha::__executeSetTimelockPendingAdmin: sender must be gov guardian'
         );
         timelock.executeTransaction(
             address(timelock),
             0,
-            "setPendingAdmin(address)",
+            'setPendingAdmin(address)',
             abi.encode(newPendingAdmin),
             eta
         );
@@ -687,12 +690,12 @@ contract GovernorAlpha {
 
     function add256(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
-        require(c >= a, "addition overflow");
+        require(c >= a, 'addition overflow');
         return c;
     }
 
     function sub256(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b <= a, "subtraction underflow");
+        require(b <= a, 'subtraction underflow');
         return a - b;
     }
 }
@@ -738,4 +741,8 @@ interface PHEEZEZInterface {
         returns (uint256);
 
     function votesAvailable() external view returns (uint256);
+}
+
+interface FRTTreasury {
+    function sendReward(uint256 rate, address account) external;
 }

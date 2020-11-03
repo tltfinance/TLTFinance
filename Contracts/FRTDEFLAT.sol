@@ -109,6 +109,10 @@ interface FRT {
   function transferFrom ( address sender, address recipient, uint256 amount ) external returns ( bool );
 }
 
+interface FRTTreasury {
+    function sendReward(uint256 rate, address account) external;
+}
+
 contract FRTRebaser {
     using SafeMath for uint;
 
@@ -116,15 +120,18 @@ contract FRTRebaser {
 
     IUniswapV2Pair public pair;
     FRT public token;
+    FRTTreasury public treasury;
 
     uint    public price0CumulativeLast = 0;
     uint32  public blockTimestampLast = 0;
     uint224 public price0RawAverage = 0;
     
     uint    public epoch = 0;
+    
 
-    constructor(address _pair) public {
+    constructor(address _pair, address _treasury) public {
         pair = IUniswapV2Pair(_pair);
+        treasury = FRTTreasury(_treasury);
         token = FRT(pair.token0());
         price0CumulativeLast = pair.price0CumulativeLast();
         uint112 reserve0;
@@ -174,11 +181,13 @@ contract FRTRebaser {
         if (price > 100000) { // positive rebase
             uint delta = price.sub(100000);
             token.rebase(epoch, toInt256Safe(token.totalSupply().mul(delta).div(100000 * 10))); // rebase using 10% of price delta
+            treasury.sendReward(1, msg.sender);
         } 
         else { // negative rebase
             uint delta = 100000;
             delta = delta.sub(price);
             token.rebase(epoch, -toInt256Safe(token.totalSupply().mul(delta).div(100000 * 2))); // get out of "death spiral" ASAP
+             treasury.sendReward(1, msg.sender);
         }
         
         pair.sync();
