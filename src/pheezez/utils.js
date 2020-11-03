@@ -320,7 +320,7 @@ export const propose = async (pheezez, targets, values, signatures, callbytes, d
   return pheezez.contracts.gov
     .methods
     .propose(targets, values, signatures, callbytes, description).send(
-      { from: account, gas: 400000 },
+      { from: account, gas: 500000 },
       async (error, txHash) => {
         if (error) {
           onTxHash && onTxHash('')
