@@ -15,7 +15,7 @@ import useAllStakedValue, {
 } from '../../../hooks/useAllStakedValue'
 import useFarms from '../../../hooks/useFarms'
 import usePheezez from '../../../hooks/usePheezez'
-import { getEarned, getDigesterContract } from '../../../pheezez/utils'
+import { getEarned, getDigesterContract, getCurrentTokensPerBlock } from '../../../pheezez/utils'
 import { bnToDec } from '../../../utils'
 import { stakingStartTime } from '../../../pheezez/lib/constants'
 
@@ -27,6 +27,9 @@ const FarmCards: React.FC = () => {
   const [farms] = useFarms()
   const { account } = useWallet()
   const stakedValue = useAllStakedValue()
+  const pheezez = usePheezez()
+  const [currentReward, setCurrentReward] = useState<BigNumber>()
+  const digesterContract = getDigesterContract(pheezez)
 
   const pheezezIndex = farms.findIndex(
     ({ tokenSymbol }) => tokenSymbol === 'PHZT',
@@ -38,8 +41,18 @@ const FarmCards: React.FC = () => {
       : new BigNumber(0)
   //console.log("PRIZZZEEEE", tokenPrice.toNumber(), pheezezIndex)
 
+  useEffect(() => {
+    async function fetchCurrentTokensPerBlock() {
+      const reward = await getCurrentTokensPerBlock(digesterContract)
+      setCurrentReward(reward.dividedBy(new BigNumber(10).pow(18)))
+    }
+    if (digesterContract) {
+      fetchCurrentTokensPerBlock()
+    }
+  }, [digesterContract, setCurrentReward])
+
   const BLOCKS_PER_YEAR = new BigNumber(2336000)
-  const PHEEZEZ_PER_BLOCK = new BigNumber(25) //Update this, get them from the contract!!!
+  const PHEEZEZ_PER_BLOCK = currentReward //get them from the contract!!!
 
   const rows = farms.reduce<FarmWithStakedValue[][]>(
     (farmRows, farm, i) => {
