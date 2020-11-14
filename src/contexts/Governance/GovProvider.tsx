@@ -50,6 +50,7 @@ const GovProvider: React.FC = ({ children }) => {
       }
 
     });
+    //console.log("Proposals", props)
     let votingPowers: ProposalVotingPower[] = await getVotingPowers(pheezez, props, account);
     setProposals(props);
     setVotingPowers(votingPowers);

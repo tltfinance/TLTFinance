@@ -6,6 +6,7 @@ import DisclaimerModal from './components/DisclaimerModal'
 import MobileMenu from './components/MobileMenu'
 import TopBar from './components/TopBar'
 import FarmsProvider from './contexts/Farms'
+import FTRFarmsProvider from './contexts/FRTFarms'
 import ModalsProvider from './contexts/Modals'
 import TransactionProvider from './contexts/Transactions'
 import PheezezProvider from './contexts/PheezezProvider'
@@ -15,7 +16,10 @@ import theme from './theme'
 import Farms from './views/Farms'
 import Home from './views/Home'
 import Governance from './views/Governance'
+import Rebase from './views/Rebase'
 import TSParticles from './components/Particles/Particles'
+import FRTProvider from './contexts/FRTProvider'
+import RebaseProvider from './contexts/Rebase'
 
 
 const App: React.FC = () => {
@@ -24,7 +28,7 @@ const App: React.FC = () => {
   const handleDismissMobileMenu = useCallback(() => {
     setMobileMenu(false)
   }, [setMobileMenu])
- //console.log("MENU", mobileMenu)
+  //console.log("MENU", mobileMenu)
   const handlePresentMobileMenu = useCallback(() => {
     setMobileMenu(true)
   }, [setMobileMenu])
@@ -33,7 +37,7 @@ const App: React.FC = () => {
 
 
     <Providers>
-    
+
       <Router>
         <div
           style={{
@@ -44,8 +48,8 @@ const App: React.FC = () => {
             height: "100vh"
           }}
         >
-            <TSParticles/>
-           
+          <TSParticles />
+
           <div
             style={{
               position: "absolute",
@@ -64,6 +68,9 @@ const App: React.FC = () => {
               <Route path="/farms">
                 <Farms />
               </Route>
+              <Route path="/rebase">
+                <Rebase />
+              </Route>
               <Route path="/gov">
                 <Governance />
               </Route>
@@ -81,20 +88,26 @@ const Providers: React.FC = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <UseWalletProvider
-        chainId={1}
+        chainId={4}
         connectors={{
-          walletconnect: { rpcUrl: "https://mainnet.infura.io/v3/08ba145cba70427c8c6957bae1fce0cd" },
+          walletconnect: { rpcUrl: "https://rinkeby.infura.io/v3/08ba145cba70427c8c6957bae1fce0cd" },
         }}
       >
         <PheezezProvider>
-          <TransactionProvider>
-            <FarmsProvider>
-            <GovProvider>
-              <ModalsProvider>{children}
-              </ModalsProvider>
-              </GovProvider>
-            </FarmsProvider>
-          </TransactionProvider>
+          <FRTProvider>
+            <TransactionProvider>
+              <FarmsProvider>
+                <FTRFarmsProvider>
+                  <GovProvider>
+                    <RebaseProvider>
+                    <ModalsProvider>{children}
+                    </ModalsProvider>
+                    </RebaseProvider>
+                  </GovProvider>
+                </FTRFarmsProvider>
+              </FarmsProvider>
+            </TransactionProvider>
+          </FRTProvider>
         </PheezezProvider>
       </UseWalletProvider>
     </ThemeProvider>

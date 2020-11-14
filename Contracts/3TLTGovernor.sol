@@ -230,6 +230,18 @@ contract GovernorAlpha {
     /// @notice Allows votation Period to be changed.
     uint256 public vPeriod = 19938;
 
+    /// @notice Allows queueReward Ratio to be changed.
+    uint256 public queueReward = 1;
+
+    /// @notice Allows voteReward ratio to be changed.
+    uint256 public voteReward = 1;
+
+    /// @notice Allows execReward ratio to be changed.
+    uint256 public execReward = 2;
+
+    /// @notice Allows proposeReward ratio to be changed.
+    uint256 public proposeReward = 4;
+
     struct Proposal {
         //Unique id for looking up a proposal
         uint256 id;
@@ -424,7 +436,7 @@ contract GovernorAlpha {
             endBlock,
             description
         );
-        treasury.sendReward(4, msg.sender);
+        treasury.sendReward(proposeReward, msg.sender);
         return newProposal.id;
     }
 
@@ -445,7 +457,7 @@ contract GovernorAlpha {
             );
         }
         proposal.eta = eta;
-        treasury.sendReward(1, msg.sender);
+        treasury.sendReward(queueReward, msg.sender);
         emit ProposalQueued(proposalId, eta);
     }
 
@@ -481,7 +493,7 @@ contract GovernorAlpha {
                 proposal.eta
             );
         }
-        treasury.sendReward(2, msg.sender);
+        treasury.sendReward(execReward, msg.sender);
         emit ProposalExecuted(proposalId);
     }
 
@@ -602,7 +614,7 @@ contract GovernorAlpha {
         receipt.hasVoted = true;
         receipt.support = support;
         receipt.votes = votes;
-        treasury.sendReward(1, msg.sender);
+        treasury.sendReward(voteReward, msg.sender);
         emit VoteCast(voter, proposalId, support, votes);
     }
 
@@ -636,6 +648,25 @@ contract GovernorAlpha {
             'GovernorAlpha::changeVotingPeriod: only the guardian can change the Ratio'
         );
         vPeriod = period;
+    }
+
+    function changeRewards(uint256 vreward, uint256 qreward, uint256 ereward, uint256 preward) public {
+        require(
+            msg.sender == guardian,
+            'GovernorAlpha::changeRewards: only the guardian can change the Ratio'
+        );
+        voteReward = vreward;
+        queueReward = qreward;
+        execReward = ereward;
+        proposeReward = preward;
+    }
+
+    function setTreasury(address treasury_) external {
+        require(
+            msg.sender == guardian,
+            'GovernorAlpha::setTreasury: only the guardian can do this action'
+        );
+        treasury = FRTTreasury(treasury_);
     }
 
     function __acceptAdmin() public {

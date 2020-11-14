@@ -1034,7 +1034,7 @@ contract Digester is Ownable {
         if (block.number > pool.lastRewardBlock && lpSupply != 0) { //No rewards until startblock arrives and LP tokens are staked.
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 halvFactor = getCurrentHalvFactor(); //This line is updated from original code as there was already a halvefactor function that was not used
-            uint256 tokensReward = multiplier.mul(initTokensPerBlock).mul(pool.allocPoint).div(totalAllocPoint).div(halvFactor);
+            uint256 tokensReward = multiplier.mul(initTokensPerBlock).mul(pool.allocPoint).div(totalAllocPoint).div(halvFactor); //Pool Total rewards at a given time.
             
             accTokensPerShare = accTokensPerShare.add(tokensReward.mul(1e12).div(lpSupply));
         }

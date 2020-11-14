@@ -43,7 +43,7 @@ const StyledValue = styled.div`
   'Lucida Sans', Arial, sans-serif;
   color: ${(props) => props.theme.color.grey[910]};
   text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
-  font-size: 36px;
+  font-size: 25px;
   font-weight: 700;
 `
 

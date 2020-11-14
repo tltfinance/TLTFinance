@@ -5,6 +5,11 @@ export const getBalanceNumber = (balance: BigNumber, decimals = 18) => {
   return displayBalance.toNumber()
 }
 
+export const getBalanceNumbernoDec = (balance: BigNumber) => {
+  const displayBalance = balance.toNumber().toFixed(2)
+  return displayBalance
+}
+
 export const getDisplayBalance = (balance: BigNumber, decimals = 18) => {
   const displayBalance = balance.dividedBy(new BigNumber(10).pow(decimals))
   if (displayBalance.lt(1)) {

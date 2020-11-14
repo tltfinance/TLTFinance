@@ -69,6 +69,9 @@ const FarmCards: React.FC = () => {
       }
       //Explanation of above calculation. Sometimes the LP pairs do not have Eth value, so we need to get the current ether value of these tokens by
       //multiplying the Token Amount by the Pheezez price, by 2 (Because of the value of the pools)
+
+      //console.log("FARMS", stakedValue[i])
+      
       const newFarmRows = [...farmRows]
       if (newFarmRows[newFarmRows.length - 1].length === 3) {
         newFarmRows.push([farmWithStakedValue])

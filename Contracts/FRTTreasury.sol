@@ -429,7 +429,7 @@ contract LPTokenWrapper {
 }
 //This is going to be owned by the timelock
 contract FRTTreasury is LPTokenWrapper, Ownable {
-    IERC20 public REWARD_TOKEN = IERC20(0x9226DF3dCB4d1B31841475E5846d41311F8f32Fb); // EDIT_ME: Reward token
+    IERC20 public REWARD_TOKEN = IERC20(0x2387A407Cfe62B5f8520FeA7DB0CB710Dc119f8E); // EDIT_ME: Reward token
     address public gov;
     address public monetaryPolicy;
 
@@ -448,9 +448,8 @@ contract FRTTreasury is LPTokenWrapper, Ownable {
     constructor () public {
         origTotalSupply = REWARD_TOKEN.totalSupply();
 
-        // 3 pools, ( 0.080 / 0.080 / 0.085) Initial reward percentage that affectes the reward rate
-        // => (0.32 / 0.32 / 0.34)  Shares given to each pool, related to the total amount of Tokens=> total 98%
-        initreward = origTotalSupply.mul(80).div(1000);
+
+        initreward = origTotalSupply.mul(10).div(1000);
 
         notifyRewardAmount(initreward);
     }
@@ -508,5 +507,10 @@ contract FRTTreasury is LPTokenWrapper, Ownable {
         lastUpdateTime = block.timestamp;
         periodFinish = block.timestamp.add(DURATION);
         emit RewardAdded(reward);
+    }
+     //Affects the reward rate.
+    function changeInitReward(uint256 reward) public onlyOwner {
+        initreward = reward;
+        notifyRewardAmount(initreward); //Will evaluate if its worth to do.
     }
 }

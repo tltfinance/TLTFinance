@@ -30,11 +30,11 @@ const useAllStakedValue = () => {
   const pheezez = usePheezez()
   const farms = getFarms(pheezez)
   const digesterContract = getDigesterContract(pheezez)
-  const wethContact = getWethContract(pheezez)
+  const wethContract = getWethContract(pheezez)
   const pheezezContract = getPheezezContract(pheezez)
   const block = useBlock()
 
-  //console.log("TEST1", pheezez, farms, digesterContract, wethContact, block )
+  //console.log("TEST1", pheezez, farms, digesterContract, wethContract, block )
 
   const fetchAllStakedValue = useCallback(async () => {
     const balances: Array<StakedValue> = await Promise.all(
@@ -50,7 +50,7 @@ const useAllStakedValue = () => {
         }) =>
           getTotalLPWethValue(
             digesterContract,
-            wethContact,
+            wethContract,
             lpContract,
             tokenContract,
             pheezezContract,

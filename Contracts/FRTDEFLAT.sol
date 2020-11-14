@@ -225,6 +225,7 @@ contract FRTRebaser {
     uint256 public price0CumulativeLast = 0;
     uint32 public blockTimestampLast = 0;
     uint224 public price0RawAverage = 0;
+    address public lastRebaser = 0x0000000000000000000000000000000000000000;
 
     uint256 public epoch = 0;
 
@@ -239,7 +240,13 @@ contract FRTRebaser {
         require(reserve0 != 0 && reserve1 != 0, 'NO_RESERVES');
     }
 
+    event LogRebase(uint indexed epoch, uint totalSupply, uint256 rand, address account);
+
     uint256 private constant MAX_INT256 = ~(uint256(1) << 255);
+    
+    function rebaseTime() public view returns (bool) {
+       return block.timestamp % 3600 < 3 * 60;
+    }
 
     function toInt256Safe(uint256 a) internal pure returns (int256) {
         require(a <= MAX_INT256);
@@ -247,7 +254,7 @@ contract FRTRebaser {
     }
 
     //Only callers that hold FRT can rebase.
-    function hasFRT() private returns (bool) {
+    function hasFRT() private view returns (bool) {
         if (token.balanceOf(msg.sender) > 0) {
             return true;
         } else {
@@ -255,7 +262,7 @@ contract FRTRebaser {
         }
     }
 
-    function rand() private returns (uint256) {
+    function rand() private view returns (uint256) {
         uint256 seed = uint256(
             keccak256(
                 abi.encodePacked(
@@ -280,8 +287,9 @@ contract FRTRebaser {
     }
 
     function rebase() external {
-        uint256 timestamp = block.timestamp;
-        require(timestamp % 3600 < 3 * 60, 'IS_NOT_TIME_TO_REBASE'); // rebase can only happen between XX:00:00 ~ XX:02:59 of every hour
+       // uint256 timestamp = block.timestamp;
+        require(lastRebaser != msg.sender, 'YOU_ALREADY_REBASED');
+        require(rebaseTime(), 'IS_NOT_TIME_TO_REBASE'); // rebase can only happen between XX:00:00 ~ XX:02:59 of every hour
         require(hasFRT(), 'YOU_DO_NOT_HOLD_FRT'); //Only holders can rebase.
         uint256 price0Cumulative = pair.price0CumulativeLast();
         uint112 reserve0;
@@ -307,12 +315,12 @@ contract FRTRebaser {
         // compute rebase
 
         uint256 price = price0RawAverage;
-        price = price.mul(10**17).div(2**112); // USDC decimals = 6, 100000 = 10^5, 18 - 6 + 5 = 17
+        price = price.mul(10**5).div(2**112); // DAI decimals = 18, 100000 = 10^5, 18 - 18 + 5 = 5   ***Important***
 
         require(price != 100000, 'NO_NEED_TO_REBASE'); // don't rebase if price = 1.00000
 
         // rebase & sync
-
+        uint256 random = rand();
         if (price > 100000) {
             // positive rebase
             uint256 delta = price.sub(100000);
@@ -320,7 +328,7 @@ contract FRTRebaser {
                 epoch,
                 toInt256Safe(token.totalSupply().mul(delta).div(100000 * 10))
             ); // rebase using 10% of price delta
-            treasury.sendReward(rand(), msg.sender);
+            treasury.sendReward(random, msg.sender);
         } else {
             // negative rebase
             uint256 delta = 100000;
@@ -329,10 +337,12 @@ contract FRTRebaser {
                 epoch,
                 -toInt256Safe(token.totalSupply().mul(delta).div(100000 * 2))
             ); // get out of "death spiral" ASAP
-            treasury.sendReward(rand(), msg.sender);
+            treasury.sendReward(random, msg.sender);
         }
 
         pair.sync();
         epoch = epoch.add(1);
+        lastRebaser = msg.sender;
+        emit LogRebase(epoch, token.totalSupply(), random, msg.sender);
     }
 }

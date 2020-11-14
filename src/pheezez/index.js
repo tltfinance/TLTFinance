@@ -7,4 +7,5 @@ BigNumber.config({
 })
 
 export { Pheezez } from './pheezez.js'
+export { FRT } from './frt.js'
 export { Web3, BigNumber }

@@ -11,6 +11,9 @@ const Nav: React.FC = () => {
       <StyledLink exact activeClassName="active" to="/farms">
         Farms
       </StyledLink>
+      <StyledLink exact activeClassName="active" to="/rebase">
+        Rebase
+      </StyledLink>
       <StyledLink exact activeClassName="active" to="/gov">
         Governance
       </StyledLink>

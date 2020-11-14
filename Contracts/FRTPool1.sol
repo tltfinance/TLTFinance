@@ -1,5 +1,3 @@
-
-
 // File: @openzeppelin/contracts/math/Math.sol
 
 pragma solidity ^0.5.0;
@@ -11,6 +9,7 @@ library Math {
     function max(uint256 a, uint256 b) internal pure returns (uint256) {
         return a >= b ? a : b;
     }
+
     function min(uint256 a, uint256 b) internal pure returns (uint256) {
         return a < b ? a : b;
     }
@@ -23,16 +22,20 @@ pragma solidity ^0.5.0;
 library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
+        require(c >= a, 'SafeMath: addition overflow');
 
         return c;
     }
 
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return sub(a, b, "SafeMath: subtraction overflow");
+        return sub(a, b, 'SafeMath: subtraction overflow');
     }
 
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b <= a, errorMessage);
         uint256 c = a - b;
 
@@ -48,16 +51,20 @@ library SafeMath {
         }
 
         uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
+        require(c / a == b, 'SafeMath: multiplication overflow');
 
         return c;
     }
 
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return div(a, b, "SafeMath: division by zero");
+        return div(a, b, 'SafeMath: division by zero');
     }
 
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         // Solidity only automatically asserts when dividing by 0
         require(b > 0, errorMessage);
         uint256 c = a / b;
@@ -67,10 +74,14 @@ library SafeMath {
     }
 
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return mod(a, b, "SafeMath: modulo by zero");
+        return mod(a, b, 'SafeMath: modulo by zero');
     }
 
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b != 0, errorMessage);
         return a % b;
     }
@@ -93,7 +104,8 @@ pragma solidity ^0.5.0;
 contract Context {
     // Empty internal constructor, to prevent people from mistakenly deploying
     // an instance of this contract, which should be used via inheritance.
-    constructor () internal { }
+    constructor() internal {}
+
     // solhint-disable-previous-line no-empty-blocks
 
     function _msgSender() internal view returns (address payable) {
@@ -122,12 +134,15 @@ pragma solidity ^0.5.0;
 contract Ownable is Context {
     address private _owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () internal {
+    constructor() internal {
         _owner = _msgSender();
         emit OwnershipTransferred(address(0), _owner);
     }
@@ -143,7 +158,7 @@ contract Ownable is Context {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(isOwner(), "Ownable: caller is not the owner");
+        require(isOwner(), 'Ownable: caller is not the owner');
         _;
     }
 
@@ -178,7 +193,10 @@ contract Ownable is Context {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      */
     function _transferOwnership(address newOwner) internal {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        require(
+            newOwner != address(0),
+            'Ownable: new owner is the zero address'
+        );
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }
@@ -210,8 +228,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
-    function mint(address account, uint amount) external;
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
+
+    function mint(address account, uint256 amount) external;
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -220,7 +241,10 @@ interface IERC20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address owner, address spender) external view returns (uint256);
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256);
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
@@ -247,7 +271,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -261,7 +289,11 @@ interface IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 }
 
 // File: @openzeppelin/contracts/utils/Address.sol
@@ -292,9 +324,13 @@ library Address {
         // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
         // for accounts without code, i.e. `keccak256('')`
         bytes32 codehash;
-        bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+
+            bytes32 accountHash
+         = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
         // solhint-disable-next-line no-inline-assembly
-        assembly { codehash := extcodehash(account) }
+        assembly {
+            codehash := extcodehash(account)
+        }
         return (codehash != 0x0 && codehash != accountHash);
     }
 
@@ -304,7 +340,11 @@ library Address {
      *
      * _Available since v2.4.0._
      */
-    function toPayable(address account) internal pure returns (address payable) {
+    function toPayable(address account)
+        internal
+        pure
+        returns (address payable)
+    {
         return address(uint160(account));
     }
 
@@ -327,11 +367,17 @@ library Address {
      * _Available since v2.4.0._
      */
     function sendValue(address payable recipient, uint256 amount) internal {
-        require(address(this).balance >= amount, "Address: insufficient balance");
+        require(
+            address(this).balance >= amount,
+            'Address: insufficient balance'
+        );
 
         // solhint-disable-next-line avoid-call-value
-        (bool success, ) = recipient.call.value(amount)("");
-        require(success, "Address: unable to send value, recipient may have reverted");
+        (bool success, ) = recipient.call.value(amount)('');
+        require(
+            success,
+            'Address: unable to send value, recipient may have reverted'
+        );
     }
 }
 
@@ -352,33 +398,83 @@ library SafeERC20 {
     using SafeMath for uint256;
     using Address for address;
 
-    function safeTransfer(IERC20 token, address to, uint256 value) internal {
-        callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
+    function safeTransfer(
+        IERC20 token,
+        address to,
+        uint256 value
+    ) internal {
+        callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transfer.selector, to, value)
+        );
     }
 
-    function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {
-        callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
+    function safeTransferFrom(
+        IERC20 token,
+        address from,
+        address to,
+        uint256 value
+    ) internal {
+        callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
+        );
     }
 
-    function safeApprove(IERC20 token, address spender, uint256 value) internal {
+    function safeApprove(
+        IERC20 token,
+        address spender,
+        uint256 value
+    ) internal {
         // safeApprove should only be called when setting an initial allowance,
         // or when resetting it to zero. To increase and decrease it, use
         // 'safeIncreaseAllowance' and 'safeDecreaseAllowance'
         // solhint-disable-next-line max-line-length
-        require((value == 0) || (token.allowance(address(this), spender) == 0),
-            "SafeERC20: approve from non-zero to non-zero allowance"
+        require(
+            (value == 0) || (token.allowance(address(this), spender) == 0),
+            'SafeERC20: approve from non-zero to non-zero allowance'
         );
-        callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, value));
+        callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.approve.selector, spender, value)
+        );
     }
 
-    function safeIncreaseAllowance(IERC20 token, address spender, uint256 value) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).add(value);
-        callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+    function safeIncreaseAllowance(
+        IERC20 token,
+        address spender,
+        uint256 value
+    ) internal {
+        uint256 newAllowance = token.allowance(address(this), spender).add(
+            value
+        );
+        callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
-    function safeDecreaseAllowance(IERC20 token, address spender, uint256 value) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).sub(value, "SafeERC20: decreased allowance below zero");
-        callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+    function safeDecreaseAllowance(
+        IERC20 token,
+        address spender,
+        uint256 value
+    ) internal {
+        uint256 newAllowance = token.allowance(address(this), spender).sub(
+            value,
+            'SafeERC20: decreased allowance below zero'
+        );
+        callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     /**
@@ -396,15 +492,19 @@ library SafeERC20 {
         //  2. The call itself is made, and success asserted
         //  3. The return value is decoded, which in turn checks the size of the returned data.
         // solhint-disable-next-line max-line-length
-        require(address(token).isContract(), "SafeERC20: call to non-contract");
+        require(address(token).isContract(), 'SafeERC20: call to non-contract');
 
         // solhint-disable-next-line avoid-low-level-calls
         (bool success, bytes memory returndata) = address(token).call(data);
-        require(success, "SafeERC20: low-level call failed");
+        require(success, 'SafeERC20: low-level call failed');
 
-        if (returndata.length > 0) { // Return data is optional
+        if (returndata.length > 0) {
+            // Return data is optional
             // solhint-disable-next-line max-line-length
-            require(abi.decode(returndata, (bool)), "SafeERC20: ERC20 operation did not succeed");
+            require(
+                abi.decode(returndata, (bool)),
+                'SafeERC20: ERC20 operation did not succeed'
+            );
         }
     }
 }
@@ -418,7 +518,7 @@ contract LPTokenWrapper {
     using SafeERC20 for IERC20;
     using Address for address;
 
-    IERC20 public LP_TOKEN = IERC20(0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990); // EDIT_ME: Stake LP token
+    IERC20 public LP_TOKEN = IERC20(0xAb42ef13f29FdAB9E9986E09e216b7f76563B3A2); // EDIT_ME: Stake LP token
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
@@ -433,8 +533,8 @@ contract LPTokenWrapper {
 
     function stake(uint256 amount) public {
         address sender = msg.sender;
-        require(!address(sender).isContract(), "plz farm by hand");
-        require(tx.origin == sender, "plz farm by hand");
+        require(!address(sender).isContract(), 'plz farm by hand');
+        require(tx.origin == sender, 'plz farm by hand');
         _totalSupply = _totalSupply.add(amount);
         _balances[sender] = _balances[sender].add(amount);
         LP_TOKEN.safeTransferFrom(sender, address(this), amount);
@@ -447,8 +547,10 @@ contract LPTokenWrapper {
     }
 }
 
-contract FRTPool is LPTokenWrapper, Ownable {
-    IERC20 public REWARD_TOKEN = IERC20(0x9226DF3dCB4d1B31841475E5846d41311F8f32Fb); // EDIT_ME: Reward token
+contract FRTPoolDAIFRT is LPTokenWrapper, Ownable {
+    IERC20 public REWARD_TOKEN = IERC20(
+        0x2387A407Cfe62B5f8520FeA7DB0CB710Dc119f8E
+    ); // EDIT_ME: Reward token
     uint256 public constant DURATION = 7 days;
 
     uint256 public origTotalSupply = 0;
@@ -460,22 +562,22 @@ contract FRTPool is LPTokenWrapper, Ownable {
     uint256 public lastUpdateTime;
     uint256 public rewardPerTokenStored;
     mapping(address => uint256) public userRewardPerTokenPaid;
-    mapping(address => uint256) public rewards; //Saves the amount of earned rewards. As teh calculations always change the values of RewardperToken
+    mapping(address => uint256) public rewards; //Saves the amount of earned rewards. As the calculations always change the values of RewardperToken
 
     event RewardAdded(uint256 reward);
     event Staked(address indexed user, uint256 amount);
     event Withdrawn(address indexed user, uint256 amount);
     event RewardPaid(address indexed user, uint256 reward);
 
-    constructor () public {
+    constructor() public {
         origTotalSupply = REWARD_TOKEN.totalSupply();
 
-        // 3 pools, ( 0.080 / 0.080 / 0.085) Initial reward percentage that affectes the reward rate
+        // 3 pools, ( 0.015 / 0.020 / 0.010) Initial reward percentage that affectes the reward rate
         // => (0.32 / 0.32 / 0.34)  Shares given to each pool, related to the total amount of Tokens=> total 98%
-        initreward = origTotalSupply.mul(80).div(1000);
+        initreward = origTotalSupply.mul(15).div(1000);
 
         notifyRewardAmount(initreward);
-        renounceOwnership();
+        //renounceOwnership(); Ownership will pass to timelock
     }
 
     modifier updateReward(address account) {
@@ -517,19 +619,24 @@ contract FRTPool is LPTokenWrapper, Ownable {
     }
 
     // stake visibility is public as overriding LPTokenWrapper's stake() function
-    function stake(uint256 amount) public updateReward(msg.sender) checkhalve checkStart { 
-        require(amount > 0, "Cannot stake 0");
+    function stake(uint256 amount)
+        public
+        updateReward(msg.sender)
+        checkhalve
+        checkStart
+    {
+        require(amount > 0, 'Cannot stake 0');
         super.stake(amount);
         emit Staked(msg.sender, amount);
     }
 
     function withdraw(uint256 amount) public updateReward(msg.sender) {
-        require(amount > 0, "Cannot withdraw 0");
+        require(amount > 0, 'Cannot withdraw 0');
         super.withdraw(amount);
         emit Withdrawn(msg.sender, amount);
     }
-    
-    //Withdraws and gets rewards  
+
+    //Withdraws and gets rewards
     function exit() external {
         withdraw(balanceOf(msg.sender));
         getReward();
@@ -545,12 +652,12 @@ contract FRTPool is LPTokenWrapper, Ownable {
             reward = reward.mul(nowTotalSupply).div(origTotalSupply);
 
             REWARD_TOKEN.safeTransfer(msg.sender, reward);
-            
+
             emit RewardPaid(msg.sender, reward);
         }
     }
 
-    modifier checkhalve(){
+    modifier checkhalve() {
         if (block.timestamp >= periodFinish) {
             initreward = initreward.mul(75).div(100); // yield reduces to 75% every week
 
@@ -560,24 +667,27 @@ contract FRTPool is LPTokenWrapper, Ownable {
         }
         _;
     }
-    modifier checkStart(){
-        require(block.timestamp > starttime,"not start");
+    modifier checkStart() {
+        require(block.timestamp > starttime, 'not start');
         _;
     }
 
-    function notifyRewardAmount(uint256 reward) private
+    function notifyRewardAmount(uint256 reward)
+        private
         updateReward(address(0))
     {
-        if (block.timestamp >= periodFinish) {
-            rewardRate = reward.div(DURATION);
-        } else {
-            uint256 remaining = periodFinish.sub(block.timestamp);
-            uint256 leftover = remaining.mul(rewardRate);
-            rewardRate = reward.add(leftover).div(DURATION);
-        }
+        
+        rewardRate = reward.div(DURATION);
+       
 
         lastUpdateTime = block.timestamp;
         periodFinish = block.timestamp.add(DURATION);
         emit RewardAdded(reward);
+    }
+
+    //Affects the reward rate.
+    function changeInitReward(uint256 reward) public onlyOwner {
+        initreward = reward;
+        notifyRewardAmount(initreward); // Will evaluate if its worth to do.
     }
 }
