@@ -209,6 +209,8 @@ contract GovernorAlpha {
     /// @notice The address of the Treasury, for paying FRT on each transaction.
     FRTTreasury public treasury;
 
+    FRTPoolPHZT public poolPHZT;
+
     /// @notice The address of the Governor Guardian. Initialy, the dev, until tests are completed.
     address public guardian;
 
@@ -346,11 +348,13 @@ contract GovernorAlpha {
     constructor(
         address timelock_,
         address pheezez_,
-        address treasury_
+        address treasury_,
+        address poolPHZT_
     ) public {
         timelock = TimelockInterface(timelock_);
         pheezez = PHEEZEZInterface(pheezez_);
         treasury = FRTTreasury(treasury_);
+        poolPHZT = FRTPoolPHZT(poolPHZT_);
         guardian = msg.sender;
     }
 
@@ -366,7 +370,8 @@ contract GovernorAlpha {
             'GovernorAlpha::propose: Not allowed to propose yet'
         );
         require(
-            pheezez.getPriorVotes(msg.sender, sub256(block.number, 1)) >
+            (add256(pheezez.getPriorVotes(msg.sender, sub256(block.number, 1)),
+             poolPHZT.getPriorVotesinPool(msg.sender, sub256(block.number, 1))))  >
                 proposalThreshold(),
             'GovernorAlpha::propose: proposer votes below proposal threshold'
         );
@@ -595,7 +600,9 @@ contract GovernorAlpha {
             receipt.hasVoted == false,
             'GovernorAlpha::_castVote: voter already voted'
         );
-        uint256 votes = pheezez.getPriorVotes(voter, proposal.startBlock);
+       
+        uint256 votes = add256(pheezez.getPriorVotes(msg.sender, proposal.startBlock),
+             poolPHZT.getPriorVotesinPool(msg.sender, proposal.startBlock));
         uint256 voteLimiter = SafeMath.div(
             SafeMath.mul(pheezez.votesAvailable(), vRatio),
             100
@@ -776,4 +783,10 @@ interface PHEEZEZInterface {
 
 interface FRTTreasury {
     function sendReward(uint256 rate, address account) external;
+}
+interface FRTPoolPHZT {
+    function getPriorVotesinPool(address account, uint256 blockNumber)
+        external
+        view
+        returns (uint256);
 }

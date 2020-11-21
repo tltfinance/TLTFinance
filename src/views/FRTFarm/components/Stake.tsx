@@ -41,7 +41,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
   const tokenBalance = useTokenBalance(lpContract.options.address)
   const stakedBalance = useStakedBalance(pid)
 
-  console.log("TEST3", pid, tokenName, tokenBalance.toNumber(), lpContract.options.address)
+  //console.log("TEST3", pid, tokenName, tokenBalance.toNumber(), lpContract.options.address)
 
   const { onStake } = useStake(pid)
   const { onUnstake } = useUnstake(pid)
@@ -76,11 +76,11 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
   }, [onApprove, setRequestedApproval])
 
   return (
-    <Card>
+    <Card variant = 'secondary'>
       <CardContent>
         <StyledCardContentInner>
           <StyledCardHeader>
-            <CardIcon>{<img src={uniLogo} height={60} alt="Logo" />}</CardIcon>
+            <CardIcon variant= 'secondary'>{<img src={uniLogo} height={60} alt="Logo" />}</CardIcon>
             <Value value={getBalanceNumber(stakedBalance)} />
             <Label text={`${tokenName} Staked`} />
             <Spacer />

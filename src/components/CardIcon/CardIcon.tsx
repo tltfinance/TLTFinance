@@ -5,12 +5,26 @@ interface CardIconProps {
   children?: React.ReactNode,
   label?: string
   size?: 'sm' | 'md'
+  variant?: 'default' | 'secondary'
 }
 
-const CardIcon: React.FC<CardIconProps> = ({ children, label, size, }) => {
+const CardIcon: React.FC<CardIconProps> = ({ children, label, size, variant }) => {
 
-  const { width } = useContext(ThemeContext)
+  const { width, color } = useContext(ThemeContext)
   let iconwidth: number
+  let color1: string
+  let color2: string
+  switch (variant) {
+    case 'secondary':
+      color1 = color.gradient[100]
+      color2 = color.gradient[200]
+      break
+    case 'default':
+    default:
+    
+      color1 = color.gradient[300]
+      color2 = color.gradient[400]
+  }
   
   switch (size) {
     case 'md':
@@ -22,7 +36,7 @@ const CardIcon: React.FC<CardIconProps> = ({ children, label, size, }) => {
   }
   //console.log("WIDTH", iconwidth)
   return (
-  <StyledCardIcon width={iconwidth} >
+  <StyledCardIcon width={iconwidth} firstColor={color1} secondColor={color2} >
   <Multiplier>{label}</Multiplier>
     {children}
   </StyledCardIcon>
@@ -30,7 +44,9 @@ const CardIcon: React.FC<CardIconProps> = ({ children, label, size, }) => {
 }
 
 interface StyledCardIconProps {
-  width: number
+  width: number,
+  firstColor: string,
+  secondColor: string
 }
 
 const Multiplier = styled.span`
@@ -45,7 +61,7 @@ width: 35px;
 text-align: center;
 `
 const StyledCardIcon = styled.div<StyledCardIconProps>`
-  background: linear-gradient(45deg, ${props => props.theme.color.gradient[400]} 0%, ${props => props.theme.color.gradient[300]} 100%);
+  background: linear-gradient(45deg, ${(props) => props.firstColor} 0%, ${(props) => props.secondColor} 100%);
   font-size: 36px;
   color: white;
   height: 80px;

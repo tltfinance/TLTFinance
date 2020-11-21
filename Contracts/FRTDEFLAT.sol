@@ -222,6 +222,7 @@ contract FRTRebaser {
     FRT public token;
     FRTTreasury public treasury;
 
+    uint256 public starttime = 1606266000; // EDIT_ME: 2020-11-25UTC:01:00+00:00
     uint256 public price0CumulativeLast = 0;
     uint32 public blockTimestampLast = 0;
     uint224 public price0RawAverage = 0;
@@ -288,6 +289,7 @@ contract FRTRebaser {
 
     function rebase() external {
        // uint256 timestamp = block.timestamp;
+        require(block.timestamp > starttime, 'REBASE IS NOT ACTIVE YET');
         require(lastRebaser != msg.sender, 'YOU_ALREADY_REBASED');
         require(rebaseTime(), 'IS_NOT_TIME_TO_REBASE'); // rebase can only happen between XX:00:00 ~ XX:02:59 of every hour
         require(hasFRT(), 'YOU_DO_NOT_HOLD_FRT'); //Only holders can rebase.
@@ -315,9 +317,11 @@ contract FRTRebaser {
         // compute rebase
 
         uint256 price = price0RawAverage;
+        uint256 priceComp = 0;
         price = price.mul(10**5).div(2**112); // DAI decimals = 18, 100000 = 10^5, 18 - 18 + 5 = 5   ***Important***
+        priceComp = price.mul(10**3).div(2**112);
 
-        require(price != 100000, 'NO_NEED_TO_REBASE'); // don't rebase if price = 1.00000
+        require(priceComp != 1000 || priceComp != 999, 'NO_NEED_TO_REBASE'); // don't rebase if price is close to 1.00000
 
         // rebase & sync
         uint256 random = rand();
@@ -336,7 +340,7 @@ contract FRTRebaser {
             token.rebase(
                 epoch,
                 -toInt256Safe(token.totalSupply().mul(delta).div(100000 * 2))
-            ); // get out of "death spiral" ASAP
+            ); // Use 2% of delta
             treasury.sendReward(random, msg.sender);
         }
 

@@ -14,6 +14,8 @@ import useFRTAllStakedValue from '../../../hooks/useFRTAllStakedValue'
 import useFRTAllEarnings from '../../../hooks/useFRTAllEarnings'
 import useTokenBalance from '../../../hooks/useTokenBalance'
 import usePheezez from '../../../hooks/usePheezez'
+import pheezezLogo from '../../../assets/img/tokenLogo.svg'
+import FRTLogo from '../../../assets/img/LogoFRT.png'
 import {
   getPheezezAddress,
   getPheezezSupply,
@@ -34,8 +36,9 @@ import {
   getFRTDAIValue,
   getPools
 } from '../../../pheezez/utilsFRT'
-import { getBalanceNumber, getBalanceNumbernoDec } from '../../../utils/formatBalance'
+import { getBalanceNumber, getBalanceNumbernoDec, getDisplayBalance } from '../../../utils/formatBalance'
 import Container from '../../../components/Container'
+import { frtFarmStartTime } from '../../../pheezez/lib/constants'
 
 
 let ethUsd = 0
@@ -63,6 +66,7 @@ const PendingRewards: React.FC = () => {
   }, [sumEarning])
 
   return (
+    <>
     <span
       style={{
         transform: `scale(${scale})`,
@@ -83,6 +87,8 @@ const PendingRewards: React.FC = () => {
         separator=","
       />
     </span>
+    <Spacer size = 'sm'/>
+    </>
   )
 }
 
@@ -286,7 +292,7 @@ const TotaStakedinFRT: React.FC = () => {
       : element.tokenPRiceinEther.toNumber() === 0 && element.frtAmount.toNumber() > 0 ? sumToken += element.frtAmount.times(tokenDai).toNumber()
       : sumWeth += element.tokenPRiceinEther.toNumber()
         
-      console.log("ASTAKED VALUE", element.tokenLPAmount.toNumber(), element.frtAmount.toNumber(), element.tokenAmount.toNumber(), element.tokenPRiceinEther.toNumber(), element.frtAmount.toNumber() , tokenUsd, sumToken, sumTokenEth, sumWeth)
+      //console.log("ASTAKED VALUE", element.tokenLPAmount.toNumber(), element.frtAmount.toNumber(), element.tokenAmount.toNumber(), element.tokenPRiceinEther.toNumber(), element.frtAmount.toNumber() , tokenUsd, sumToken, sumTokenEth, sumWeth)
 
     });
     sumToken = sumToken * 2
@@ -327,6 +333,7 @@ const Balances: React.FC = () => {
   const digesterContract = getDigesterContract(pheezez)
   const contract = getPoolContract(frt,0) //This is only used as a UseEffect dependency
   const { account, ethereum }: { account: any; ethereum: any } = useWallet()
+  const [farmStart, setFarmStart] = useState(frtFarmStartTime * 1000 - Date.now() <= 0)
   const contracts : Array<any> = []
 
   useEffect(() => {
@@ -429,11 +436,11 @@ const Balances: React.FC = () => {
             <div>
           <FootnoteValueRight>
             <Spacer/>
-                {!!account ? <PendingRewards /> : 'locked'}  PHZT
+                {!!account ? <PendingRewards /> : '--.--'}  PHZT {<img src={pheezezLogo} style={{ height: 20 }} />}
           </FootnoteValueRight>
           <FootnoteValueRight>
              <Spacer />
-                {!!account ? <PendingFRTRewards /> : 'locked'} {' FRT'} 
+                {!!account && farmStart? <PendingFRTRewards /> : '--.--'} {' FRT'} {<img src={FRTLogo} style={{ height: 20 }} />}
           </FootnoteValueRight>
           </div>
             </Footnote>
@@ -459,7 +466,7 @@ const Balances: React.FC = () => {
                   <Spacer />
                   <div style={{ flex: 1 }}>
                     <Label text="FRT" />
-                    {!!account ? <FRTPrice /> : <StyledPrice>$--.--</StyledPrice>}
+                    {!!account && farmStart? <FRTPrice /> : <StyledPrice>$--.--</StyledPrice>}
                   </div>
                 </StyledBalance>
               </StyledBalances>
@@ -492,7 +499,7 @@ const Balances: React.FC = () => {
                   <div style={{ flex: 1 }}>
                     <Label text="Total FRT Supply" />
                     <Value
-                      value={totalFRTSupply ? getBalanceNumber(totalFRTSupply) : 'Locked'}
+                      value={totalFRTSupply ? getBalanceNumber(totalFRTSupply) : 'Locked'} decimals = {0}
                     />
                   </div>
                 </StyledBalance>
@@ -503,11 +510,11 @@ const Balances: React.FC = () => {
               <div>
           <FootnoteValueRight>
           <Spacer />
-            {currentReward ? getBalanceNumber(currentReward) : 'locked'} PHZT
+            {currentReward ? getBalanceNumber(currentReward) : '--.--'} PHZT  {<img src={pheezezLogo} style={{ height: 20 }} />}
             </FootnoteValueRight>
           <FootnoteValueRight>
           <Spacer />
-            {!!account && currentFRTReward ? getBalanceNumbernoDec(currentFRTReward) : 'locked'} FRT
+            {!!account && currentFRTReward && farmStart  ? getBalanceNumbernoDec(currentFRTReward) : '--.--'} FRT {<img src={FRTLogo} style={{ height: 20 }} />}
             </FootnoteValueRight>
               </div>
             </Footnote>
@@ -532,7 +539,7 @@ const Balances: React.FC = () => {
                   <Spacer />
                   <div style={{ flex: 1 }}>
                     <Label text="FRT Farms" />
-                    {!!account ? <TotaStakedinFRT /> : <StyledPrice>$--.--</StyledPrice>}
+                    {!!account && farmStart ? <TotaStakedinFRT /> : <StyledPrice>$--.--</StyledPrice>}
                   </div>
                 </StyledBalance>
               </StyledBalances>

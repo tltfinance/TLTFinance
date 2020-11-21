@@ -15,6 +15,8 @@ export interface Farm {
   icon2: string
   id: string
   tokenSymbol: string
+  unipool: string
+  starttime: number
 }
 
 export interface FarmsContext {

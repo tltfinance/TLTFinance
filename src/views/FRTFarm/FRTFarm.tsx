@@ -8,7 +8,8 @@ import Spacer from '../../components/Spacer'
 import useFRTFarm from '../../hooks/useFRTFarm'
 import useRedeem from '../../hooks/useFRTRedeem'
 import { getPoolContract } from '../../pheezez/utilsFRT'
-
+import useEarnings from '../../hooks/useFRTEarnings'
+import useStakedBalance from '../../hooks/useFRTStakedBalance'
 import useFRT from '../../hooks/useFRT'
 import { getContract } from '../../utils/erc20'
 import Harvest from './components/Harvest'
@@ -28,6 +29,8 @@ const FRTFarm: React.FC = () => {
     name,
     icon,
     icon2,
+    unipool,
+    starttime,
   } = useFRTFarm(farmId) || {
     pid: 0,
     poolToken: '',
@@ -37,6 +40,8 @@ const FRTFarm: React.FC = () => {
     name: '',
     icon: '',
     icon2: '',
+    unipool: '',
+    starttime: 0,
   }
 
   useEffect(() => {
@@ -45,6 +50,8 @@ const FRTFarm: React.FC = () => {
 
   const frt = useFRT()
   const { ethereum } = useWallet()
+  const earnings = useEarnings(pid)
+  const stakedBalance = useStakedBalance(pid)
   const { onRedeem } = useRedeem(getPoolContract(frt, pid))
 
 
@@ -63,12 +70,21 @@ const FRTFarm: React.FC = () => {
   
   return (
     <>
-      <PageHeader
+      { (icon2 === '') && (<PageHeader
+        icon={<img src={icon} height="120" alt="Logo" />}
+        subtitle={`Deposit ${lpTokenName}  Tokens and earn ${earnTokenName}`}
+        title={name}
+      />)
+       ||
+       (<PageHeader
         icon={<img src={icon} height="120" alt="Logo" />}
         icon2={<img src={icon2} height="120" alt="Logo" />}
         subtitle={`Deposit ${lpTokenName}  Tokens and earn ${earnTokenName}`}
         title={name}
-      />
+      />)
+      
+      
+      }
       <StyledFarm>
         <StyledCardsWrapper>
           <StyledCardWrapper>
@@ -88,13 +104,16 @@ const FRTFarm: React.FC = () => {
         <Spacer />
        
           <div>
+             
             <Button
               size="md"
+              disabled = {(earnings && earnings.toNumber() > 0) && (stakedBalance && stakedBalance.toNumber() > 0) ? false : true}
               variant = 'secondary'
               text="Withdraw and Exit"
               onClick={onRedeem}
 
             />
+           
           </div>
       
         <Spacer size="lg" />

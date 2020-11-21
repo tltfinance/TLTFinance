@@ -3,7 +3,10 @@ import BigNumber from 'bignumber.js/bignumber'
 export const SUBTRACT_GAS_LIMIT = 100000
 export const stakingStartTime =1  //****Modify */
 export const proposalStartTime =1   //****Modify */
+export const rebaseStartTime = 1606266000
+export const frtFarmStartTime = 1606438800
 export const rebaseCounter = 3600
+export const REBASE_PERIOD = 600 
 
 const ONE_MINUTE_IN_SECONDS = new BigNumber(60)
 const ONE_HOUR_IN_SECONDS = ONE_MINUTE_IN_SECONDS.times(60)
@@ -27,8 +30,8 @@ export const INTEGERS = {
 
 export const addressMap = {
   uniswapFactoryV2: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
-  WETH: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
-  FRT: '0x2387A407Cfe62B5f8520FeA7DB0CB710Dc119f8E',
+  WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  FRT: '0x561695f9556AF49C2B22F71e55b7b0B6F673834f',
 }
 
 
@@ -36,43 +39,43 @@ export const addressMap = {
 ////
 export const contractAddresses = {
   pheezez: {
-    4: '0xbfa8b98f4b7a762d689435237d91f6c4c9ef5990',
+    1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
   },
   digester: {
-    4: '0x793D0F8944B05f7C91403CF8925BDbF695e06858',
+    1: '0xf16160dBeADe7827058D3dBc9D5628ac930f7555',
   },
   weth: {
-    4: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+    1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
   },
   ethusd: {
-    4: '0x5308a481B2b65F6086083D2268acb73AADC757E0',
+    1: '0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852',
   },
   pheezezeth: {
-    4: '0xd524546f03068762a018E20082F971bd28570040',
+    1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
   },
   gov: {
-    4: '0x00c4687cBfE06049d29C1C53aAe08C40C266c62f',
+    1: '0x62823702F035edD42d678563C2c6af5648908A48',
   },
   timelock: {
-    4: '0x8CdC1CCfD0b1de8d2E7F14B69503d0aEd7bfd431',
+    1: '0xb07b20EF02Fe024f4Cb2E6F48F3af96Ba2e41994',
   },
   frt: {
-    4: '0x2387A407Cfe62B5f8520FeA7DB0CB710Dc119f8E',
+    1: '0x561695f9556AF49C2B22F71e55b7b0B6F673834f',
   },
   frtRebaser: {
-    4: '0x00fdfa8D998006E873eeA54E6cA16897C8CF8634',
+    1: '0x2dDAB2019fCfd837796cDF700234A87ec2cDA408',
   },
   frtTreasury: {
-    4: '0x274c0002632C4f781961Efc669e94c7CC9b428aa',
+    1: '0x357B034c85E3f518f4EAD6d13b0390B68542d6A2',
   },
   frtPool1: {
-    4: '0x86039396BdE9502e5D36F5a764599fe021ce7b4B',
+    1: '0x6A1d98DaE0963ab8898ba02b652D1647Bd758E47',
   },
   dai: {
-    4: '0xC2CA1777CC7795DbE1843bE7Cfd03B597Ce731EC',
+    1: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
   },
   frtdai: {
-    4: '0xAb42ef13f29FdAB9E9986E09e216b7f76563B3A2',
+    1: '0xFbfe86d339B510860a0b9C4112e30173297A52b7',
   },
 }
 
@@ -101,49 +104,125 @@ export const supportedPools = [
   {
     pid: 0,
     lpAddresses: {
-      4: '0xd524546f03068762a018E20082F971bd28570040',
+      1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
     },
     tokenAddresses: {
-      4: '0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990',
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
     },
     name: 'PHZT-ETH',
     symbol: 'PHZT-ETH LP',
     tokenSymbol: 'PHZT',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/eth-logo.svg"),
-    unipool: "https://app.uniswap.org/#/add/0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990/ETH",
+    unipool: "https://app.uniswap.org/#/add/0x8296BcEd40BA067a1de30aEB5a294258c16a0473/ETH",
   },
   {
     pid: 1,
     lpAddresses: {
-      4: '0x4DCf3A1500E991Fd1EB35686100Bf1612F9dC3e2',
+      1: '0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852',
     },
     tokenAddresses: {
-      4: '0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990',
-    },
-    name: 'PHZT v2-PHZ v1',
-    symbol: 'PHZT LP',
-    tokenSymbol: 'PHZTv2',
-    icon: require("../../assets/img/eos-logo.svg"),
-    icon2: require("../../assets/img/tokenLogo.svg"),
-    unipool: "https://app.uniswap.org/#/add/0x1d234e079dca4be8cd49fcb13645f23098dc535c/0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990",
-  },
-  {
-    pid: 2,
-    lpAddresses: {
-      4: '0x5308a481B2b65F6086083D2268acb73AADC757E0',
-    },
-    tokenAddresses: {
-      4: '0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02',
+      1: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     },
     name: 'ETH-USDT',
     symbol: 'ETH-USDT LP',
     tokenSymbol: 'USDT',
     icon: require("../../assets/img/usdt-logo.svg"),
     icon2: require("../../assets/img/eth-logo.svg"),
-    unipool: "https://app.uniswap.org/#/add/0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02/ETH",
+    unipool: "https://app.uniswap.org/#/add/0xdAC17F958D2ee523a2206206994597C13D831ec7/ETH",
+  },
+  {
+    pid: 2,
+    lpAddresses: {
+      1: '0x6420e846872CfaDEfb43f8a0aca7B5A3068d381D',
+    },
+    tokenAddresses: {
+      1: '0x1E18821E69B9FAA8e6e75DFFe54E7E25754beDa0',
+    },
+    name: 'PHZT-Kimchi',
+    symbol: 'PHZT-Kimchi LP',
+    tokenSymbol: 'KIMCHI',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/kimchi-logo.png"),
+    unipool: "https://app.uniswap.org/#/add/0x1E18821E69B9FAA8e6e75DFFe54E7E25754beDa0/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
+  },
+  {
+    pid: 3,
+    lpAddresses: {
+      1: '0x0868818Ca648E241A6A8CC38c77448933A8cFD11',
+    },
+    tokenAddresses: {
+      1: '0x4b7DfAe2567181E54776337C840e142ACb42AA1F',
+    },
+    name: 'PHZT-GKimchi',
+    symbol: 'PHZT-GKimchi LP',
+    tokenSymbol: 'GODKIMCHI',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/gkimchi-logo.png"),
+    unipool: "https://app.uniswap.org/#/add/0x4b7DfAe2567181E54776337C840e142ACb42AA1F/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
+  },
+  {
+    pid: 4,
+    lpAddresses: {
+      1: '0x5489916B86164249BB2F9bb1579428f68f04B707',
+    },
+    tokenAddresses: {
+      1: '0x429881672B9AE42b8EbA0E26cD9C73711b891Ca5',
+    },
+    name: 'PHZT-PICKLE',
+    symbol: 'PHZT-PICKLE LP',
+    tokenSymbol: 'PICKLE',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/pickle-logo.png"),
+    unipool: "https://app.uniswap.org/#/add/0x429881672B9AE42b8EbA0E26cD9C73711b891Ca5/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
+  },
+  {
+    pid: 5,
+    lpAddresses: {
+      1: '0x6Bd1b7EF4Ce45274D247D90DE356565C836F2A57',
+    },
+    tokenAddresses: {
+      1: '0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183',
+    },
+    name: 'PHZT-SHROOM',
+    symbol: 'PHZT-SHROOM LP',
+    tokenSymbol: 'SHROOM',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/shroom-logo.png"),
+    unipool: "https://app.uniswap.org/#/add/0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
+  },
+  {
+    pid: 6,
+    lpAddresses: {
+      1: '0x73d961fC88B8be968ff266f1F4FE6B1EcEadAc17',
+    },
+    tokenAddresses: {
+      1: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
+    },
+    name: 'PHZT-SUSHI',
+    symbol: 'PHZT-SUSHI LP',
+    tokenSymbol: 'SUSHI',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/sushi-logo.png"),
+    unipool: "https://app.uniswap.org/#/add/0x6B3595068778DD592e39A122f4f5a5cF09C90fE2/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
+  },
+  {
+    pid: 7,
+    lpAddresses: {
+      1: '0xFe08cE82A6968b01cc9159C92D71C0370587dd7E',
+    },
+    tokenAddresses: {
+      1: '0x066798d9ef0833ccc719076Dab77199eCbd178b0',
+    },
+    name: 'PHZT-SAKE',
+    symbol: 'PHZT-SAKE LP',
+    tokenSymbol: 'SAKE',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/sake-logo.svg"),
+    unipool: "https://app.uniswap.org/#/add/0x066798d9ef0833ccc719076Dab77199eCbd178b0/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
 ]
+
 
 //Pools related to FRT
 
@@ -151,52 +230,58 @@ export const frtPools = [
   {
     pid: 0,
     poolAddresses: {
-      4: '0x86039396BdE9502e5D36F5a764599fe021ce7b4B',
+      1: '0x9133B95A6C379efc1648D3b6fCF78D4904deF2E5',
     },
     lpAddresses: {
-      4: '0xAb42ef13f29FdAB9E9986E09e216b7f76563B3A2',
+      1: '0xFbfe86d339B510860a0b9C4112e30173297A52b7',
     },
     tokenAddresses: {
-      4: '0xC2CA1777CC7795DbE1843bE7Cfd03B597Ce731EC',
+      1: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
     },
     name: 'FRT-DAI Pool',
     symbol: 'FRT-DAI',
     tokenSymbol: 'FRTLP',
-    icon: require("../../assets/img/tokenLogo.svg"),
-    icon2: require("../../assets/img/eth-logo.svg"),
+    icon: require("../../assets/img/LogoFRT.png"),
+    icon2: require("../../assets/img/dai-logo.svg"),
+    unipool: "https://app.uniswap.org/#/add/0x561695f9556af49c2b22f71e55b7b0b6f673834f/0x6b175474e89094c44da98b954eedeac495271d0f",
+    starttime: 1606438800,
   },
   {
     pid: 1,
     poolAddresses: {
-      4: '0xbA759c288bE07f0E966C14bE2ad7b6D3dC14825D',
+      1: '0x6443a6d9f7D037561AacEA1F4205D9e62f91dAee',
     },
     lpAddresses: {
-      4: '0xd524546f03068762a018E20082F971bd28570040',
+      1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
     },
     tokenAddresses: {
-      4: '0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990',
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
     },
     name: 'PHZT-ETH Pool',
     symbol: 'PHZT-ETH',
     tokenSymbol: 'PHZTLP',
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/eth-logo.svg"),
+    unipool: "https://app.uniswap.org/#/add/0x8296BcEd40BA067a1de30aEB5a294258c16a0473/ETH",
+    starttime: 1606525200,
   },
   {
     pid: 2,
     poolAddresses: {
-      4: '0x60679abb8318D53A7684B63b7B780906a9a96a42',
+      1: '0x6A1d98DaE0963ab8898ba02b652D1647Bd758E47',
     },
     lpAddresses: {
-      4: '0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990',
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
     },
     tokenAddresses: {
-      4: '0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990',
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
     },
     name: 'PHZT Pool',
     symbol: 'PHZT',
     tokenSymbol: 'PHZT',
     icon: require("../../assets/img/tokenLogo.svg"),
-    icon2: require("../../assets/img/eth-logo.svg"),
+    icon2: '',
+    unipool: "",
+    starttime: 1606611600,
   },
 ]

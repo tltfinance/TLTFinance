@@ -18,7 +18,7 @@ const Home: React.FC = () => {
       <PageHeader
         icon={<i className="fas fa-toilet-paper" />}
         title="What goes in, must go out"
-        subtitle="Digest your food Uniswap LP tokens and produce PHZT!"
+        subtitle="Digest your food Uniswap LP tokens and produce PHZT and FRT!"
       />
       <Container>
         <Balances />

@@ -8,8 +8,8 @@ import Page from '../../components/Page'
 import Card from '../../components/Card'
 import PageHeader from '../../components/PageHeader'
 import WalletProviderModal from '../../components/WalletProviderModal'
-import pheezezLogo from '../../assets/img/metamask-fox.svg'
-import FRTLogo from '../../assets/img/wallet-connect.svg'
+import pheezezLogo from '../../assets/img/tokenLogo.svg'
+import FRTLogo from '../../assets/img/LogoFRT.png'
 
 import useModal from '../../hooks/useModal'
 import Farm from '../Farm'
@@ -28,7 +28,7 @@ const Farms: React.FC = () => {
   const { account } = useWallet()
   const [farm, setFarm] = useState('')
   const [onPresentWalletProviderModal] = useModal(<WalletProviderModal />)
-  
+
   const handlePHZTClick = useCallback(() => {
     setFarm('PHZT')
   }, [setFarm])
@@ -48,29 +48,30 @@ const Farms: React.FC = () => {
                 subtitle="Welcome to our Toilet."
                 title="What do you want to farm?"
               />
-             <StyledWalletsWrapper>
-             <StyledWalletCard>
-              <Card>
-                <CardContent>
-                  <CardIcon>{<img src={pheezezLogo} style={{ height: 32 }} />}</CardIcon>
-                  <CardTitle text="Farm PHZT" />
-                  <Spacer />
-                  <Button onClick={handlePHZTClick} text="Select PHZT" />
-                </CardContent>
-              </Card>
-              </StyledWalletCard>
-              <Spacer size="sm" />
-              <Spacer size="sm" />
-              <StyledWalletCard>
-              <Card>
-              <CardContent>
-                  <CardIcon>{<img src={FRTLogo} style={{ height: 32 }} />}</CardIcon>
-                  <CardTitle text="Farm FRT" />
-                  <Spacer />
-                  <Button onClick={handleFRTClick} text="Select FRT" />
-                </CardContent>
-              </Card>
-              </StyledWalletCard>
+              <StyledWalletsWrapper>
+                <StyledWalletCard>
+                  <Card variant='secondary'>
+                    <CardContent>
+                      <CardIcon variant='secondary'>{<img src={FRTLogo} style={{ height: 45 }} />}</CardIcon>
+                      <CardTitle text="Farm FRT" />
+                      <Spacer />
+                      <Button onClick={handleFRTClick} text="Select FRT" />
+                    </CardContent>
+
+                  </Card>
+                </StyledWalletCard>
+                <Spacer size="sm" />
+                <Spacer size="sm" />
+                <StyledWalletCard>
+                  <Card >
+                    <CardContent>
+                      <CardIcon>{<img src={pheezezLogo} style={{ height: 45 }} />}</CardIcon>
+                      <CardTitle text="Farm PHZT" />
+                      <Spacer />
+                      <Button onClick={handlePHZTClick} text="Select PHZT" />
+                    </CardContent>
+                  </Card>
+                </StyledWalletCard>
               </StyledWalletsWrapper>
             </>
 
@@ -90,7 +91,7 @@ const Farms: React.FC = () => {
                 <Farm />
               </Route>
             </>
-          )  ||
+          ) ||
           (farm === 'FRT') &&
           (
             <>

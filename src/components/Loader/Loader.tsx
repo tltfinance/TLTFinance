@@ -12,7 +12,9 @@ const Loader: React.FC<LoaderProps> = ({ text }) => {
   return (
     <StyledLoader>
       <CardIcon>
-        <StyledPheezez>{<img src={logo} height={60} />}</StyledPheezez>
+        <StyledPheezez>
+        <i className="fas fa-toilet-paper"></i>  
+        </StyledPheezez>
       </CardIcon>
       {!!text && <StyledText>{text}</StyledText>}
     </StyledLoader>

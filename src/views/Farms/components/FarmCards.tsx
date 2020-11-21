@@ -224,6 +224,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
                   : 'Loading ...'}
               </span>
             </StyledInsight>
+            
           </StyledContent>
         </CardContent>
       </Card>
@@ -333,5 +334,7 @@ const StyledInsight = styled.div`
   text-align: center;
   padding: 0 12px;
 `
+
+
 
 export default FarmCards

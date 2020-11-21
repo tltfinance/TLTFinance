@@ -518,7 +518,7 @@ contract LPTokenWrapper {
     using SafeERC20 for IERC20;
     using Address for address;
 
-    IERC20 public LP_TOKEN = IERC20(0xd524546f03068762a018E20082F971bd28570040); // EDIT_ME: Stake LP token
+    IERC20 public LP_TOKEN = IERC20(0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549); // EDIT_ME: Stake LP token
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
@@ -549,14 +549,14 @@ contract LPTokenWrapper {
 
 contract FRTPoolETHPHZT is LPTokenWrapper, Ownable {
     IERC20 public REWARD_TOKEN = IERC20(
-        0x2387A407Cfe62B5f8520FeA7DB0CB710Dc119f8E
-    ); // EDIT_ME: Reward token
+        0x561695f9556AF49C2B22F71e55b7b0B6F673834f
+    ); // EDIT_ME: Reward token -> FRT
     uint256 public constant DURATION = 7 days;
 
     uint256 public origTotalSupply = 0;
 
     uint256 public initreward = 0;
-    uint256 public starttime = 1600956000; // EDIT_ME: 2020-09-24T14:00:00+00:00
+    uint256 public starttime = 1606525200; // EDIT_ME: 2020-11-28UTC:01:00+00:00
     uint256 public periodFinish = 0; //The exact time when reward rate is reduced.
     uint256 public rewardRate = 0;
     uint256 public lastUpdateTime;
@@ -689,5 +689,11 @@ contract FRTPoolETHPHZT is LPTokenWrapper, Ownable {
     function changeInitReward(uint256 reward) public onlyOwner {
         initreward = reward;
         notifyRewardAmount(initreward); //Will evaluate if its worth to do.
+    }
+
+    //In case community decides to move the Rewards to another contract.
+    function recoverRewards(address account) public onlyOwner {
+        uint256 reward = REWARD_TOKEN.balanceOf(address(this));
+        REWARD_TOKEN.safeTransfer(account, reward);
     }
 }

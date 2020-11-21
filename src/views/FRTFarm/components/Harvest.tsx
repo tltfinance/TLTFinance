@@ -9,7 +9,7 @@ import Value from '../../../components/Value'
 import useEarnings from '../../../hooks/useFRTEarnings'
 import useReward from '../../../hooks/useFRTReward'
 import { getBalanceNumber } from '../../../utils/formatBalance'
-import tlogo from '../../../assets/img/tokenLogo.svg'
+import tlogo from '../../../assets/img/LogoFRT.png'
 
 interface HarvestProps {
   pid: number
@@ -21,12 +21,12 @@ const Harvest: React.FC<HarvestProps> = ({ pid }) => {
   const { onReward } = useReward(pid)
 
   return (
-    <Card>
+    <Card variant = 'secondary'>
       <CardContent>
         <StyledCardContentInner>
           <StyledCardHeader>
-            <CardIcon>
-            {<img src={tlogo} height={60} alt = "Logo" />}
+            <CardIcon variant= 'secondary'>
+            {<img src={tlogo} height={50} alt = "Logo" />}
             </CardIcon>
             <Value value={getBalanceNumber(earnings)} />
             <Label text="FRT Earned" />

@@ -17,8 +17,10 @@ import Box from "./components/BoxWithDisplay"
 import SeparatorGrid from "./components/SeparatorWithCSS"
 import PageHeader from '../../components/PageHeader'
 import WalletProviderModal from '../../components/WalletProviderModal'
+import CannotRebaseModal from './components/CannotRebaseModal'
+import NoNeedToRebaseModal from './components/NoNeedToRebaseModal'
 import useModal from '../../hooks/useModal'
-import { rebaseCounter } from '../../pheezez/lib/constants'
+import { rebaseStartTime } from '../../pheezez/lib/constants'
 import useRebase from '../../hooks/useRebase'
 import useFRT from '../../hooks/useFRT'
 import {
@@ -31,8 +33,10 @@ import {
   getFRTDAIContract,
   formatTime,
   getFRtBalance,
-  getNextHour
+  getNextHour,
+  isRebasable
 } from '../../pheezez/utilsFRT'
+import Loader from '../../components/Loader'
 
 const Rebase: React.FC = () => {
   const { account } = useWallet()
@@ -45,9 +49,16 @@ const Rebase: React.FC = () => {
   const [hasFRT, setHasFRT] = useState(0)
   const [startTime, setStartTime] = useState(818035920000)
   const [rebaseActive, setRebaseActive] = useState((Date.now() / 1000) % 3600 < 3 * 60)
+  const [rebaseStart, setRebaseStart] = useState(rebaseStartTime * 1000 - Date.now() <= 0)
+  const [onCannotRebase] = useModal(
+    <CannotRebaseModal/>,
+  )
+  const [noNeedtoRebase] = useModal(
+    <NoNeedToRebaseModal/>,
+  )
  // let rebaseActive = (Date.now() / 1000) % 3600 < 3 * 60
 
-  //console.log("EVENT", Date.now() % 3600000, rebases)
+  //console.log("EVENT", rebases)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -87,22 +98,45 @@ const Rebase: React.FC = () => {
   }, [setStartTime, rebaseActive])
 
 
-  const handleRebase = useCallback((frt, account) => {
-    async function doRebase() {
-      setPendingTx(true)
-      try {
+  const handleRebase = useCallback((frt, frtdaiContract, account) => {
 
-        await rebase(frt, account)
-      }
-      catch (error) {
-        console.log("EVENT", error)
-      }
-      //console.log("EVENT", pair)
-      setPendingTx(false)
+    async function posibleToRebase() {
+        const rebasable = await isRebasable(frt, frtdaiContract, account)
+        //console.log("NOTICE", rebasable)
+        
+        if (rebasable === "yes")
+        {
 
+        
+        setPendingTx(true)
+        try {
+  
+          await rebase(frt, account)
+        }
+        catch (error) {
+          console.log("EVENT", error)
+        }
+        //console.log("EVENT", pair)
+        setPendingTx(false)
+    
+        }
+        else if ( rebasable === "same")
+        {
+          onCannotRebase()
+        }
+        else if (rebasable === "period" || rebasable === "price")
+        {
+          noNeedtoRebase()
+        }
+        
     }
-    doRebase()
-  }, [setPendingTx])
+    
+    if (frt && frtdaiContract && account) 
+    {
+      posibleToRebase()
+    }
+    
+  }, [setPendingTx, frt, frtdaiContract, account ])
 
 
   const renderer = (countdownProps: CountdownRenderProps) => {
@@ -113,7 +147,8 @@ const Rebase: React.FC = () => {
       // Render a completed state
       return (
       <>
-      {setRebaseActive((Date.now() / 1000) % 3600 < 3 * 60)}      
+      {setRebaseActive((Date.now() / 1000) % 3600 < 3 * 60)}
+      {setRebaseStart(rebaseStartTime * 1000 - Date.now() <= 0)}      
       </>
       )
     } else {
@@ -156,7 +191,7 @@ const Rebase: React.FC = () => {
                       <Spacer></Spacer>
                       <StyledDetails>
                         <StyledDetail>
-                          1 FRT = {numeral(frtdai).format('0,0.00')} DAI.
+                          1 FRT = {(rebaseStart) ? numeral(frtdai).format('0,0.00') : "--.--"} DAI.
                     </StyledDetail>
                       </StyledDetails>
                     </StyledContent>
@@ -172,17 +207,20 @@ const Rebase: React.FC = () => {
                       <StyledProposalButtonWrapper>
                         <Button
                           text="Rebase"
-                          disabled={!rebaseActive || !frt || hasFRT <= 0 ? true : pendingTx}
+                          disabled={!rebaseStart || !rebaseActive || !frt || hasFRT <= 0 ? true : pendingTx}
                           onClick={async () => {
 
-                            await handleRebase(frt, account)
+                            await handleRebase(frt, frtdaiContract, account)
 
                           }}
                           variant="tertiary"
                         />
                       </StyledProposalButtonWrapper>
                       <StyledTitle>
-                       {(rebaseActive) && (<Countdown
+                       {
+                       (!rebaseStart || !rebaseActive) && (<div>"Rebase is not active yet"</div>)
+                       ||
+                       (rebaseActive && rebaseStart) && (<Countdown
                             date={startTime}
                             renderer={renderer}
                           />)}
@@ -199,7 +237,10 @@ const Rebase: React.FC = () => {
                   </StyledTitle>
                       <StyledDetails>
                         <StyledDetail>
-                        {(!rebaseActive) &&
+                        {
+                         (!rebaseStart) && (<div>--:--:--</div>)
+                         ||
+                        (!rebaseActive) &&
                           (<Countdown
                             date={startTime}
                             renderer={renderer}
@@ -223,7 +264,7 @@ const Rebase: React.FC = () => {
             <Spacer size="lg" />
             <StyledProposalsWrapper>
               <Card>
-                <CardTitle text="List of Rebases" />
+                <CardTitle text="List of Rebases - (Last 24)" />
                 <Spacer size="sm" />
                 <CardContent>
                   <Box
@@ -245,7 +286,21 @@ const Rebase: React.FC = () => {
                     </StyledProposalContentInner>
                   </Box>
                   <Spacer size="sm" />
-                  {(rebases) &&
+                  {(!rebases) &&
+                    (
+                      <StyledLoadingWrapper>
+                      <Loader text="Loading Rebase List ..." />
+                    </StyledLoadingWrapper>
+                    )
+                    ||
+                    (rebases.length == 0) &&
+                    (
+                    <StyledLoadingWrapper>
+                      There are no Rebases yet
+                    </StyledLoadingWrapper>
+                    )
+                    ||
+                    (rebases) &&
                     (
 
                       <StyledListWrapper>
@@ -368,6 +423,13 @@ const StyledProposalButtonWrapper = styled.div`
     width: auto;
   }
 `
+
+const StyledLoadingWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+`
 const StyledCounter = styled.div`
   align-items: center;
   display: flex;
@@ -410,7 +472,7 @@ const StyledCardWrapper = styled.div`
   0 9px 46px 8px ${(props) => props.theme.color.grey[800]},
   0 11px 15px -7px ${(props) => props.theme.color.grey[800]};
   width: calc((900px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
-  height: 210px;
+  height: 245px;
   @media (max-width: 700px) {
     width: 100%;
   }

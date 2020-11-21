@@ -272,8 +272,7 @@ export const getPools = (pheezez) => {
 
 export const createUNIPAIR = async (pheezez, tokenAddress, account, onTxHash) => {
 
-  console.log("PROPOSAL", pheezez.pheezezAddress, tokenAddress, pheezez.contracts.unifactory
-  .methods)
+  //console.log("PROPOSAL", pheezez.pheezezAddress, tokenAddress, pheezez.contracts.unifactory.methods)
   let result = await pheezez.contracts.unifactory
     .methods
     .createPair(tokenAddress, pheezez.pheezezAddress).send(
@@ -528,11 +527,11 @@ export const latestProposal = async (pheezez, account) => {
 export const proposalEnd = async (block) => {
   const response = await fetch(`https://api.etherscan.io/api?module=block&action=getblockcountdown&blockno=${block}&apikey=6STBMXJ1868UD2EFQYMTK6DNFH24PVB74K`);
   const myJson = await response.json(); //extract JSON from the http response
-  console.log(myJson.result.EstimateTimeInSec)
+  //console.log(myJson.result.EstimateTimeInSec)
   return myJson.result.EstimateTimeInSec
   // do something with myJson
 }
-export const getVotingPowers = async (pheezez, proposals, account) => {
+export const getVotingPowers = async (pheezez, proposals, poolContract, account) => {
   let BASE18 = new BigNumber(10).pow(18);
   let powers = []
   for (let i = 0; i < proposals.length; i++) {
@@ -540,10 +539,17 @@ export const getVotingPowers = async (pheezez, proposals, account) => {
       let receipt = await
         pheezez.contracts.gov.methods.getReceipt(proposals[i].id, account).call();
       let power = new BigNumber(receipt[2]).div(BASE18).toNumber();
+      let sum1 = 0;
+      let sum2 = 0;
       if (power === 0) {
-        power = new BigNumber(await
+        sum1 = new BigNumber(await
           pheezez.contracts.pheezez.methods.getPriorVotes(account, proposals[i].start).call()
         ).div(BASE18).toNumber();
+        sum2 = new BigNumber(await
+          poolContract.methods.getPriorVotesinPool(account, proposals[i].start).call()
+        ).div(BASE18).toNumber();
+        power = sum1 + sum2;
+        //console.log("Infinitum POWEERR", power)
       }
       powers.push({
         hash: proposals[i].hash,

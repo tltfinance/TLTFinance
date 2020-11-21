@@ -29,6 +29,7 @@ import {
   StyledButton,
   StyledProposalContentInner
 } from './components/Proposal'
+import Loader from '../../components/Loader'
 
 const Governance: React.FC = () => {
   const { account } = useWallet()
@@ -123,7 +124,22 @@ const Governance: React.FC = () => {
                     </StyledProposalContentInner>
                   </Box>
                   <Spacer size="sm" />
-                  {(proposals) &&
+                  {
+                    (!proposals) &&
+                    (
+                      <StyledLoadingWrapper>
+                      <Loader text="Loading Proposal List ..." />
+                    </StyledLoadingWrapper>
+                    )
+                    ||
+                    (proposals.length == 0) &&
+                    (
+                    <StyledLoadingWrapper>
+                      There are no Proposals yet
+                    </StyledLoadingWrapper>
+                    )
+                    ||
+                    (proposals) &&
                     (
 
                       <StyledListWrapper>
@@ -261,6 +277,13 @@ const StyledProposalButtonWrapper = styled.div`
     justify-content: center;
     width: auto;
   }
+`
+
+const StyledLoadingWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
 `
 const StyledCounter = styled.div`
   align-items: center;

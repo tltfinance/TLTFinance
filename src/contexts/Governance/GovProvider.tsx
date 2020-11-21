@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useWallet } from 'use-wallet'
 import usePheezez from '../../hooks/usePheezez'
+import useFRT from '../../hooks/useFRT'
 import {
   getProposals,
   vote,
@@ -15,6 +16,10 @@ import {
   executeProposal,
   cancelProposal,
 } from '../../pheezez/utils'
+import {
+  getCurrentVotingPowerinPool,
+  getPoolContract
+} from '../../pheezez/utilsFRT'
 
 import Context from './Context'
 
@@ -23,8 +28,9 @@ import { Proposal, ProposalVotingPower } from "./types"
 const GovProvider: React.FC = ({ children }) => {
   const { account } = useWallet()
   const pheezez = usePheezez()
+  const frt = useFRT()
   const pools = getPools(pheezez)
-
+  const poolContract = getPoolContract(frt , 2)
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false)
   const [isVoting, setIsVoting] = useState(false)
   const [isProposing, setIsProposing] = useState(false)
@@ -51,24 +57,30 @@ const GovProvider: React.FC = ({ children }) => {
 
     });
     //console.log("Proposals", props)
-    let votingPowers: ProposalVotingPower[] = await getVotingPowers(pheezez, props, account);
+    let votingPowers: ProposalVotingPower[] = await getVotingPowers(pheezez,props, poolContract, account);
     setProposals(props);
     setVotingPowers(votingPowers);
   }, [
     setProposals,
     setVotingPowers,
     pheezez,
+    frt,
+    poolContract
   ])
  
   
  
   const fetchCurrentPower = useCallback(async () => {
-    if (!pheezez) return;
+    if (!pheezez && !frt) return;
     let votingPower: number = await getCurrentVotingPower(pheezez, account);
-    setCurrentPower(votingPower);
+    let votingPowerinPool: number = await getCurrentVotingPowerinPool(frt, poolContract, account);
+    let powers: number = votingPower + votingPowerinPool;
+    setCurrentPower(powers);
   }, [
     setCurrentPower,
     pheezez,
+    frt,
+    poolContract
   ])
 
   const handleVote = useCallback(async (proposal: number, side: boolean) => {

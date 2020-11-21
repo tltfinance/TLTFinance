@@ -325,6 +325,7 @@ library Address {
         // for accounts without code, i.e. `keccak256('')`
         bytes32 codehash;
 
+
             bytes32 accountHash
          = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
         // solhint-disable-next-line no-inline-assembly
@@ -518,7 +519,19 @@ contract LPTokenWrapper {
     using SafeERC20 for IERC20;
     using Address for address;
 
-    IERC20 public LP_TOKEN = IERC20(0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990); // EDIT_ME: Stake LP token --> PHZT
+    IERC20 public LP_TOKEN = IERC20(0x8296BcEd40BA067a1de30aEB5a294258c16a0473); // EDIT_ME: Stake LP token --> PHZT
+
+     /// @notice A checkpoint for marking number of votes from a given block
+    struct Checkpoint {
+        uint32 fromBlock;
+        uint256 votes;
+    }
+
+    /// @notice A record of votes checkpoints for each account, by index
+    mapping (address => mapping (uint32 => Checkpoint)) public checkpoints;
+
+    /// @notice The number of checkpoints for each account
+    mapping (address => uint32) public numCheckpoints;
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
@@ -538,25 +551,118 @@ contract LPTokenWrapper {
         _totalSupply = _totalSupply.add(amount);
         _balances[sender] = _balances[sender].add(amount);
         LP_TOKEN.safeTransferFrom(sender, address(this), amount);
+        addCheckpoint(sender,amount);
     }
 
     function withdraw(uint256 amount) public {
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
         LP_TOKEN.safeTransfer(msg.sender, amount);
+        delCheckpoint(msg.sender,amount);
     }
+
+    function addCheckpoint(address dstRep, uint256 amount) internal {
+           if (dstRep != address(0)) {
+                uint32 dstRepNum = numCheckpoints[dstRep];
+                uint256 dstRepOld = dstRepNum > 0 ? checkpoints[dstRep][dstRepNum - 1].votes : 0;
+                uint256 dstRepNew = dstRepOld.add(amount);
+                _writeCheckpoint(dstRep, dstRepNum, dstRepNew);
+            }
+        }
+    
+
+    
+    function delCheckpoint(address srcRep, uint256 amount) internal {
+       
+            if (srcRep != address(0)) {
+                uint32 srcRepNum = numCheckpoints[srcRep];
+                uint256 srcRepOld = srcRepNum > 0 ? checkpoints[srcRep][srcRepNum - 1].votes : 0;
+                uint256 srcRepNew = srcRepOld.sub(amount);
+                _writeCheckpoint(srcRep, srcRepNum, srcRepNew);
+            }
+
+           
+    }
+
+    function _writeCheckpoint(address delegatee, uint32 nCheckpoints, uint256 newVotes) internal {
+      uint32 blockNumber = safe32(block.number, "_writeCheckpoint: block number exceeds 32 bits");
+
+      if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
+          checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;
+      } else {
+          checkpoints[delegatee][nCheckpoints] = Checkpoint(blockNumber, newVotes);
+          numCheckpoints[delegatee] = nCheckpoints + 1;
+      }  
+    }
+    /**
+     * @notice Gets the current votes balance for `account`
+     * @param account The address to get votes balance
+     * @return The number of current votes for `account`
+     */
+     
+    function getCurrentVotesinPool(address account) external view returns (uint256) {
+        uint32 nCheckpoints = numCheckpoints[account];
+        return nCheckpoints > 0 ? checkpoints[account][nCheckpoints - 1].votes : 0;
+    }
+
+     /**
+     * @notice Determine the prior number of votes for an account as of a block number
+     * @dev Block number must be a finalized block or else this function will revert to prevent misinformation.
+     * @param account The address of the account to check
+     * @param blockNumber The block number to get the vote balance at
+     * @return The number of votes the account had as of the given block
+     */
+    function getPriorVotesinPool(address account, uint blockNumber) public view returns (uint256) {
+        require(blockNumber < block.number, "getPriorVotesinPool: not yet determined");
+
+        uint32 nCheckpoints = numCheckpoints[account];
+        if (nCheckpoints == 0) {
+            return 0;
+        }
+
+        // First check most recent balance
+        if (checkpoints[account][nCheckpoints - 1].fromBlock <= blockNumber) {
+            return checkpoints[account][nCheckpoints - 1].votes;
+        }
+
+        // Next check implicit zero balance
+        if (checkpoints[account][0].fromBlock > blockNumber) {
+            return 0;
+        }
+
+        uint32 lower = 0;
+        uint32 upper = nCheckpoints - 1;
+        while (upper > lower) {
+            uint32 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
+            Checkpoint memory cp = checkpoints[account][center];
+            if (cp.fromBlock == blockNumber) {
+                return cp.votes;
+            } else if (cp.fromBlock < blockNumber) {
+                lower = center;
+            } else {
+                upper = center - 1;
+            }
+        }
+        return checkpoints[account][lower].votes;
+    }   
+
+     function safe32(uint n, string memory errorMessage) internal pure returns (uint32) {
+        require(n < 2**32, errorMessage);
+        return uint32(n);
+    } 
+
 }
 
 contract FRTPoolPHZT is LPTokenWrapper, Ownable {
     IERC20 public REWARD_TOKEN = IERC20(
-        0x2387A407Cfe62B5f8520FeA7DB0CB710Dc119f8E
+        0x561695f9556AF49C2B22F71e55b7b0B6F673834f
     ); // EDIT_ME: Reward token --> FRT
     uint256 public constant DURATION = 7 days;
 
     uint256 public origTotalSupply = 0;
 
     uint256 public initreward = 0;
-    uint256 public starttime = 1600956000; // EDIT_ME: 2020-09-24T14:00:00+00:00
+    uint256 public starttime = 1606611600; // EDIT_ME: 2020-11-29UTC:01:00+00:00
     uint256 public periodFinish = 0; //The exact time when reward rate is reduced.
     uint256 public rewardRate = 0;
     uint256 public lastUpdateTime;
@@ -571,7 +677,7 @@ contract FRTPoolPHZT is LPTokenWrapper, Ownable {
 
     constructor() public {
         origTotalSupply = REWARD_TOKEN.totalSupply();
-
+       
         // 3 pools, ( 0.080 / 0.080 / 0.085) Initial reward percentage that affectes the reward rate
         // => (0.32 / 0.32 / 0.34)  Shares given to each pool, related to the total amount of Tokens=> total 98%
         initreward = origTotalSupply.mul(10).div(1000);
@@ -676,9 +782,7 @@ contract FRTPoolPHZT is LPTokenWrapper, Ownable {
         private
         updateReward(address(0))
     {
-        
         rewardRate = reward.div(DURATION);
-       
 
         lastUpdateTime = block.timestamp;
         periodFinish = block.timestamp.add(DURATION);
@@ -690,4 +794,15 @@ contract FRTPoolPHZT is LPTokenWrapper, Ownable {
         initreward = reward;
         notifyRewardAmount(initreward); //Will evaluate if its worth to do.
     }
+
+    //In case community decides to move the Rewards to another contract.
+    function recoverRewards(address account) public onlyOwner {
+        uint256 reward = REWARD_TOKEN.balanceOf(address(this));
+        REWARD_TOKEN.safeTransfer(account, reward);
+    }
+
+
+
+
 }
+

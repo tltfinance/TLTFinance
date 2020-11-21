@@ -13,28 +13,13 @@
             },
             {
                 "internalType": "address",
-                "name": "guardian_",
+                "name": "treasury_",
                 "type": "address"
             },
             {
-                "internalType": "uint256",
-                "name": "proposedelay_",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "quorumratio_",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "thresholdratio_",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "voteratio_",
-                "type": "uint256"
+                "internalType": "address",
+                "name": "poolPHZT_",
+                "type": "address"
             }
         ],
         "stateMutability": "nonpayable",
@@ -301,11 +286,52 @@
         "inputs": [
             {
                 "internalType": "uint256",
+                "name": "vreward",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "qreward",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "ereward",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "preward",
+                "type": "uint256"
+            }
+        ],
+        "name": "changeRewards",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
                 "name": "ratio",
                 "type": "uint256"
             }
         ],
         "name": "changeThresholdRatio",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "period",
+                "type": "uint256"
+            }
+        ],
+        "name": "changeVotingPeriod",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -321,6 +347,19 @@
         "name": "changeVotingRatio",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "execReward",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -462,6 +501,19 @@
         "outputs": [
             {
                 "internalType": "contract PHEEZEZInterface",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "poolPHZT",
+        "outputs": [
+            {
+                "internalType": "contract FRTPoolPHZT",
                 "name": "",
                 "type": "address"
             }
@@ -626,6 +678,19 @@
     },
     {
         "inputs": [],
+        "name": "proposeReward",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "qRatio",
         "outputs": [
             {
@@ -652,6 +717,19 @@
     },
     {
         "inputs": [],
+        "name": "queueReward",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "quorumVotes",
         "outputs": [
             {
@@ -661,6 +739,19 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "treasury_",
+                "type": "address"
+            }
+        ],
+        "name": "setTreasury",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -710,7 +801,46 @@
     },
     {
         "inputs": [],
+        "name": "treasury",
+        "outputs": [
+            {
+                "internalType": "contract FRTTreasury",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "vPeriod",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "vRatio",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "voteReward",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -744,7 +874,7 @@
                 "type": "uint256"
             }
         ],
-        "stateMutability": "pure",
+        "stateMutability": "view",
         "type": "function"
     }
 ]

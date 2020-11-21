@@ -18,7 +18,7 @@ import useFRT from '../../../hooks/useFRT'
 import usePheezez from '../../../hooks/usePheezez'
 import { getEarned, getPoolContract, getCurrentFRTPerBlock, getPools, getFRTDAIValue, getFRTDAIContract } from '../../../pheezez/utilsFRT'
 import { bnToDec } from '../../../utils'
-import { getpheezezethContract, getethusdContract, calculateTokenUSDValue  } from '../../../pheezez/utils'
+import { getpheezezethContract, getethusdContract, calculateTokenUSDValue } from '../../../pheezez/utils'
 import { stakingStartTime } from '../../../pheezez/lib/constants'
 
 interface FarmWithStakedValue extends Farm, StakedValue {
@@ -35,11 +35,11 @@ const FRTFarms: React.FC = () => {
   const [currentReward, setCurrentReward] = useState([] as Array<BigNumber>)
   const pools = getPools(frt)
   const pheezez = usePheezez()
-  const contract = getPoolContract(frt,0) //This is only used as a UseEffect dependency
+  const contract = getPoolContract(frt, 0) //This is only used as a UseEffect dependency
   const pheezezethContract = getpheezezethContract(pheezez)
   const ehtusdContract = getethusdContract(pheezez)
   const [phztPrice, setTokenPrice] = useState(0)
-  const contracts : Array<any> = []
+  const contracts: Array<any> = []
 
   useEffect(() => {
     async function fetchTokenPrice() {
@@ -51,24 +51,23 @@ const FRTFarms: React.FC = () => {
     }
   }, [ehtusdContract, pheezezethContract, setTokenPrice])
 
-  
+
   useEffect(() => {
     let i = 0
-    for (i; i < pools.length; i++)
-    {
-       contracts.push(getPoolContract(frt,i))
-     
-   }
-   //This line is essential to avoid infinite loops on useEffect when having a dependency array.
-  // const {current:poolContract} = useRef(contracts)
+    for (i; i < pools.length; i++) {
+      contracts.push(getPoolContract(frt, i))
+
+    }
+    //This line is essential to avoid infinite loops on useEffect when having a dependency array.
+    // const {current:poolContract} = useRef(contracts)
   }, [contract])
- 
+
   const frtIndex = farms.findIndex(
     ({ tokenSymbol }) => tokenSymbol === 'FRT',
   )
 
   const tokenPrice = frtdai
-  
+
 
   useEffect(() => {
     async function fetchFRTPrice() {
@@ -85,14 +84,13 @@ const FRTFarms: React.FC = () => {
     async function fetchCurrentTokensPerBlock() {
       let reward = new BigNumber(0)
       let rewardArray: Array<BigNumber> = []
-      for (let i=0; i < pools.length; i++)
-      {
+      for (let i = 0; i < pools.length; i++) {
         reward = await getCurrentFRTPerBlock(frt, contracts[i])
         //console.log("rewardssss11111111111",reward.toNumber())
         reward = reward.multipliedBy(new BigNumber(13)).dividedBy(new BigNumber(10).pow(18))
         rewardArray.push(reward)
       }
-     
+
       setCurrentReward(rewardArray)
     }
     if (contracts) {
@@ -115,16 +113,15 @@ const FRTFarms: React.FC = () => {
             .times(FRT_PER_BLOCK[i])
             .times(BLOCKS_PER_YEAR)
             .times(stakedValue[i].poolWeight)
-            .div(stakedValue[i].totalDaiValue.toNumber() > 0 ? (stakedValue[i].totalDaiValue) 
-            : stakedValue[i].totalWethValue.toNumber() > 0 ? (stakedValue[i].totalWethValue) 
-            : stakedValue[i].tokenAmount.times(phztPrice)) 
+            .div(stakedValue[i].totalDaiValue.toNumber() > 0 ? (stakedValue[i].totalDaiValue)
+              : stakedValue[i].totalWethValue.toNumber() > 0 ? (stakedValue[i].totalWethValue)
+                : stakedValue[i].tokenAmount.times(phztPrice))
           : null,
       }
-      
-      if (stakedValue[i] && FRT_PER_BLOCK[i] )
-      {
-     console.log("FARMS", phztPrice, tokenPrice.toNumber(), stakedValue[i].poolWeight.toNumber(), FRT_PER_BLOCK[i].toNumber(), stakedValue[i].tokenAmount.times(phztPrice).toNumber())
-    }
+
+      if (stakedValue[i] && FRT_PER_BLOCK[i]) {
+       // console.log("FARMS", phztPrice, tokenPrice.toNumber(), stakedValue[i].poolWeight.toNumber(), FRT_PER_BLOCK[i].toNumber(), stakedValue[i].tokenAmount.times(phztPrice).toNumber())
+      }
 
       const newFarmRows = [...farmRows]
       if (newFarmRows[newFarmRows.length - 1].length === 3) {
@@ -136,8 +133,8 @@ const FRTFarms: React.FC = () => {
     },
     [[]],
   )
-  
-  
+
+
   return (
     <StyledCards>
       {!!rows[0].length ? (
@@ -199,12 +196,22 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
     }
   }, [frt, account, setHarvestable])
 
-  const poolActive = startTime * 1000 - Date.now() <= 0
+  const poolActive = farm.starttime * 1000 - Date.now() <= 0
   //console.log("DATE", Date.now(), poolActive)
-  var animate: boolean
-  let mult: string
+  let animate: boolean
+  let sizu: 'sm' | 'md'
   switch (farm.tokenSymbol) {
     case 'PHZT':
+      sizu = 'sm'
+      break
+    default:
+      sizu = 'md'
+  }
+
+
+  let mult: string
+  switch (farm.tokenSymbol) {
+    case 'FRT':
       mult = '5x'
       break
     case 'USDT':
@@ -234,56 +241,88 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   }
 
   return (
-    <StyledCardWrapper>
-      {farm.tokenSymbol === 'FRT' ? animate = true : animate = false}
-      <Card animation={animate}>
-        <BackgroundSquare />
-        <CardContent>
-          <StyledContent>
-            <CardIcon size='md' label={mult}>
-              <Spaner>{<img src={farm.icon} height={55} alt="Logo" />}</Spaner>
-              <Spaner>{<img src={farm.icon2} height={55} alt="Logo" />}</Spaner>
-            </CardIcon>
-            <StyledTitle>{farm.name}</StyledTitle>
-            <StyledDetails>
-              <StyledDetail>Deposit {farm.poolToken.toUpperCase()}</StyledDetail>
-              <StyledDetail>Earn {farm.earnToken.toUpperCase()}</StyledDetail>
-            </StyledDetails>
-            <Spacer />
-            <StyledButtonWrapper>
-              <Button
-                disabled={!poolActive}
-                text={poolActive ? 'Select' : undefined}
-                to={`/farms/${farm.id}`}
-                size='md'
-              >
-                {!poolActive && (
-                  <Countdown
-                    date={new Date(startTime * 1000)}
-                    renderer={renderer}
-                  />
-                )}
-              </Button>
-            </StyledButtonWrapper>
-            <StyledInsight>
-              <span>APY</span>
-              <span>
-                {farm.apy
-                  ? `${farm.apy
-                    .times(new BigNumber(100))
-                    .toNumber()
-                    .toLocaleString('en-US')
-                    .slice(0, -1)}%`
-                  : 'Loading ...'}
-              </span>
-            </StyledInsight>
-          </StyledContent>
-        </CardContent>
-      </Card>
-    </StyledCardWrapper>
+    <div>
+      <StyledCardWrapper>
+        {farm.tokenSymbol === 'FRT' ? animate = true : animate = false}
+
+        <Card animation={animate} variant='secondary'>
+          <BackgroundSquare />
+          <CardContent>
+            <StyledContent>
+              <CardIcon size={sizu} label={mult} variant='secondary'>
+                <Spaner>{<img src={farm.icon} height={50} alt="Logo" />}</Spaner>
+                { (sizu === 'md') &&
+                (<Spaner>{<img src={farm.icon2} height={50} alt="Logo" />}</Spaner>)
+                }
+              </CardIcon>
+              <StyledTitle>{farm.name}</StyledTitle>
+              <StyledDetails>
+                <StyledDetail>Deposit {farm.poolToken.toUpperCase()}</StyledDetail>
+                <StyledDetail>Earn {farm.earnToken.toUpperCase()}</StyledDetail>
+              </StyledDetails>
+              <Spacer />
+              <StyledButtonWrapper>
+                <Button
+                  disabled={!poolActive}
+                  text={poolActive ? 'Select' : undefined}
+                  to={`/farms/${farm.id}`}
+                  size='md'
+                >
+                  {!poolActive && (
+                    <Countdown
+                      date={new Date(farm.starttime * 1000)}
+                      renderer={renderer}
+                    />
+                  )}
+                </Button>
+              </StyledButtonWrapper>
+              <StyledInsight>
+                <span>APY</span>
+                <span>
+                  {farm.apy
+                    ? `${farm.apy
+                      .times(new BigNumber(100))
+                      .toNumber()
+                      .toLocaleString('en-US')
+                      .slice(0, -1)}%`
+                    : 'Loading ...'}
+                </span>
+              </StyledInsight>
+            </StyledContent>
+          </CardContent>
+        </Card>
+      </StyledCardWrapper>
+      { (farm.unipool != "") && (
+        <Footnote>
+          <StyledAbsoluteLink
+            href={farm.unipool}
+            target="_blank"
+          >
+            Get Uniswap LP Token
+      </StyledAbsoluteLink>
+
+        </Footnote>
+      )
+      }
+    </div>
   )
 }
 
+const StyledAbsoluteLink = styled.a`
+color: ${(props) => props.theme.color.grey[906]};
+text-decoration: none;
+width: 100%;
+&:hover {
+  color: ${(props) => props.theme.color.grey[905]};
+  border-radius: 4px;
+  transition: all 0.2s ease-out;
+}
+&.active {
+  color: ${(props) => props.theme.color.grey[906]};
+  transition: all 0.2s ease-out;
+  text-shadow: 2px 2px 4px #000000;
+}
+`
 
 const Spaner = styled.span`
  float:right;
@@ -386,5 +425,14 @@ const StyledInsight = styled.div`
   text-align: center;
   padding: 0 12px;
 `
-
+const Footnote = styled.div`
+  z-index: 3;
+  position: relative;
+  top: -37px;
+  text-align: center;
+  font-size: 18px;
+  font-size: 20px;
+  color: ${(props) => props.theme.color.grey[906]};
+  text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+`
 export default FRTFarms

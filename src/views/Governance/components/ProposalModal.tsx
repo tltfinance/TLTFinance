@@ -9,12 +9,14 @@ import ModalContent from '../../../components/ModalContent'
 import ModalTitle from '../../../components/ModalTitle'
 import styled from 'styled-components'
 import usePheezez from '../../../hooks/usePheezez'
+import useFRT from '../../../hooks/useFRT'
 import { useWallet } from 'use-wallet'
 import Split from '../../../components/Split'
 import ErasePool from './ErasePool'
 import UpdatePool from './UpdatePool'
 import AddPool from './AddPool'
 import { getThreshold, obtainPriorVotes, getDigesterAddress } from '../../../pheezez/utils'
+import { obtainPriorVotesinPool, getPoolContract } from '../../../pheezez/utilsFRT'
 import useBlock from '../../../hooks/useBlock'
 
 interface ProposalModalProps extends ModalProps {
@@ -29,8 +31,11 @@ const ProposalModal: React.FC<ProposalModalProps> = ({
 
   const { account } = useWallet()
   const pheezez = usePheezez()
+  const frt = useFRT()
   const block = useBlock()
   const digesterAddress = getDigesterAddress(pheezez)
+  const poolContract = getPoolContract(frt, 2)
+
 
   const options = [
     { value: 'DeletePool', label: 'Erase Pool' },
@@ -64,13 +69,19 @@ const ProposalModal: React.FC<ProposalModalProps> = ({
       if (block > 0) {
         let counter = block - 1
         const votes = await obtainPriorVotes(pheezez, account, counter)
-        setPriorVotes(votes)
+        const votesinPool = await obtainPriorVotesinPool(frt, poolContract, account, counter)
+
+        let totalVotes = votes + votesinPool
+       // console.log("TOTAL VOTES", votes, votesinPool, totalVotes)
+        setPriorVotes(totalVotes)
+
+
       }
     }
-    if (pheezez) {
+    if (pheezez && frt) {
       fetchPriorVotes()
     }
-  }, [pheezez, setPriorVotes, block])
+  }, [pheezez, setPriorVotes, block, frt, poolContract])
 
   useEffect(() => {
     if (value === "DeletePool") {
@@ -116,8 +127,8 @@ const ProposalModal: React.FC<ProposalModalProps> = ({
           <CardContent>
             <Dropdown options={options} onChange={(e) => setValue(e.value)} value={value} placeholder="Select an option" />
             {(value === 'DeletePool') && (<ErasePool onSelectPool={handleSelect} onInputText={handleInput} />) ||
-             (value === 'UpdatePool') && (<UpdatePool onSelectPool={handleSelect} onInputText={handleInput} />) ||
-             (value === 'AddtoPool') && (<AddPool onSelectPool={handleSelect} onInputText={handleInput} />)}
+              (value === 'UpdatePool') && (<UpdatePool onSelectPool={handleSelect} onInputText={handleInput} />) ||
+              (value === 'AddtoPool') && (<AddPool onSelectPool={handleSelect} onInputText={handleInput} />)}
 
 
 

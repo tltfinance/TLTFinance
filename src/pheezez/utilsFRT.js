@@ -2,7 +2,8 @@ import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 import {
-  addressMap
+  addressMap,
+  REBASE_PERIOD
 } from './lib/constants'
 
 BigNumber.config({
@@ -50,6 +51,8 @@ export const getFarms = (frt) => {
         frtPoolContract,
         lpAddress,
         lpContract,
+        unipool,
+        starttime,
       }) => ({
         pid,
         id: symbol,
@@ -66,6 +69,8 @@ export const getFarms = (frt) => {
         earnTokenAddress: frt.contracts.frt.options.address,
         icon,
         icon2,
+        unipool,
+        starttime,
       }),
     )
     : []
@@ -186,7 +191,7 @@ export const getTotalStakedValue = async (
   // Calculate the whole daiAmount staked (Think about the half value of a LP pool represented in DAI Amount)
   const daiAmount = lpDAIWorth.times(portionLp).div(new BigNumber(10).pow(18))
 
-  console.log("WHAT?", totalSupply, "WETH:", wethAmount.toNumber() , "TOKENLPAM:",tokenLPAmount.toNumber(), tokenAmount.toNumber(), frtAmount.toNumber(), daiAmount.toNumber(), totalLpValue.div(new BigNumber(10).pow(18)).toNumber()  )
+  //console.log("WHAT?", totalSupply, "WETH:", wethAmount.toNumber() , "TOKENLPAM:",tokenLPAmount.toNumber(), tokenAmount.toNumber(), frtAmount.toNumber(), daiAmount.toNumber(), totalLpValue.div(new BigNumber(10).pow(18)).toNumber()  )
   return {
     tokenAmount,
     tokenLPAmount,
@@ -315,7 +320,12 @@ export const getRebases = async (frt) => {
   
   
   let rebases = [];
-  for (let i = 0; i < tltRebases.length; i++) {
+  //ARREGLAR
+  if (tltRebases.length > 0)
+  {
+
+  
+  for (let i = tltRebases.length - 1; i > tltRebases.length - 25 && i >= 0; i--) {
 
     let epoch = tltRebases[i]["returnValues"]["epoch"]
     let totalSupply = tltRebases[i]["returnValues"]["totalSupply"]
@@ -331,7 +341,7 @@ export const getRebases = async (frt) => {
        address = txReceipt["logs"][j]["address"]
       // console.log("Rebases", address)
       if (address === addressMap.FRT && txReceipt["logs"][j]["topics"][0] ==="0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef") {
-        console.log("Rebases", txReceipt["logs"][j]["topics"][0])
+        //console.log("Rebases", txReceipt["logs"][j]["topics"][0])
         amount = new BigNumber(parseInt(txReceipt["logs"][j]["data"])).div(BASE18)
       } 
     }
@@ -348,8 +358,9 @@ export const getRebases = async (frt) => {
       hash: tltRebases[i]["transactionHash"],
     });
   }
-  
+}
   return rebases;
+
 }
 
 export const getPools = (frt) => {
@@ -399,11 +410,57 @@ export const getNextHour = (timeinMiliSeconds) => {
   let thisHour = month + ' ' + days + ' ' + year + ' ' + hours + ':' + "00" + ':' + "00"
   let thisHourTimeStamp = Date.parse(thisHour);
   let nextHourTimeStamp = thisHourTimeStamp + timeinMiliSeconds
-  console.log(nextHourTimeStamp, Date.now())
+  //console.log(nextHourTimeStamp, Date.now())
   return nextHourTimeStamp
 }
 
 export const getFRtBalance = async (frt, account) => {
   let BASE18 = new BigNumber(10).pow(18);
   return new BigNumber(await frt.contracts.frt.methods.balanceOf(account).call()).dividedBy(BASE18).toNumber()
+}
+
+export const obtainPriorVotesinPool = async (frt, poolContract, account, block) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  return new BigNumber(await poolContract.methods.getPriorVotesinPool(account, block).call()).dividedBy(BASE18).toNumber()
+}
+
+export const getCurrentVotingPowerinPool = async (frt, poolContract, account) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  return new BigNumber(await poolContract.methods.getCurrentVotesinPool(account).call()).dividedBy(BASE18).toNumber()
+}
+
+export const isRebasable = async (frt, frtdaiContract, account) => {
+  let lastRebaser = await frt.contracts.frtRebaser.methods.lastRebaser().call()
+  //let starttime = await frt.contracts.frtRebaser.methods.starttime().call()
+
+  //console.log("TIME", starttime)
+
+  if (lastRebaser == account)
+  {
+    return "same"
+  }
+  let priceCumulativeLast = new BigNumber(await frt.contracts.frtRebaser.methods.price0CumulativeLast().call())
+  let priceCumulative =  new BigNumber(await frtdaiContract.methods.price0CumulativeLast().call())
+  let blockLast =  new BigNumber(await frt.contracts.frtRebaser.methods.blockTimestampLast().call())
+  let reserves = await frtdaiContract.methods.getReserves().call()
+  let blockTimesTamp =  new BigNumber(reserves["_blockTimestampLast"])
+
+  let timeElapsed = blockTimesTamp.minus(blockLast)
+  if (timeElapsed < REBASE_PERIOD)
+  {
+    return "period"
+  }
+  
+  let priceAvarage = priceCumulative.minus(priceCumulativeLast).dividedBy(timeElapsed)
+  let price = priceAvarage.multipliedBy(new BigNumber(10).pow(3)).dividedBy(new BigNumber(2).pow(112))
+  price = Math.floor(price.toNumber())
+  //console.log("RESERVS",price, timeElapsed, priceCumulative, priceCumulativeLast)
+  if (price == 1000 || price == 999)
+  {
+    console.log("RESERVS",price, timeElapsed.toNumber(), priceCumulative.toNumber(), priceCumulativeLast.toNumber())
+    return "price"
+  }
+
+  console.log("RESERVS",price)
+ return "yes"
 }

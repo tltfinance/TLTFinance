@@ -429,7 +429,7 @@ contract LPTokenWrapper {
 }
 //This is going to be owned by the timelock
 contract FRTTreasury is LPTokenWrapper, Ownable {
-    IERC20 public REWARD_TOKEN = IERC20(0x2387A407Cfe62B5f8520FeA7DB0CB710Dc119f8E); // EDIT_ME: Reward token
+    IERC20 public REWARD_TOKEN = IERC20(0x561695f9556AF49C2B22F71e55b7b0B6F673834f); // EDIT_ME: Reward token - FRT
     address public gov;
     address public monetaryPolicy;
 
@@ -471,12 +471,17 @@ contract FRTTreasury is LPTokenWrapper, Ownable {
     {
         require(msg.sender == gov || msg.sender == monetaryPolicy, "Not Allowed to Send");
         uint256 reward = initreward.mul(rate).div(1000); //Sets the reward according to a rate that the caller will set.
+        uint256 limiter = 100;
         if (reward > 0) {
 
             // scaled by nowTotalSupply / origTotalSupply when claiming reward
             uint256 nowTotalSupply = REWARD_TOKEN.totalSupply();
             reward = reward.mul(nowTotalSupply).div(origTotalSupply);
-
+            //Limit to 100frt max!!.
+            if (reward > limiter.mul(1e18))
+            {
+                reward = limiter.mul(1e18);
+            }
             REWARD_TOKEN.safeTransfer(account, reward);
             
             emit RewardPaid(account, reward);
@@ -513,4 +518,11 @@ contract FRTTreasury is LPTokenWrapper, Ownable {
         initreward = reward;
         notifyRewardAmount(initreward); //Will evaluate if its worth to do.
     }
+    
+    //In case community decides to move the Rewards to another contract.
+    function recoverRewards(address account) public onlyOwner {
+        uint256 reward = REWARD_TOKEN.balanceOf(address(this));
+        REWARD_TOKEN.safeTransfer(account, reward);
+    }
+
 }
