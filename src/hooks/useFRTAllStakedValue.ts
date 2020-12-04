@@ -24,6 +24,7 @@ import useBlock from './useBlock'
 export interface StakedValue {
   tokenAmount: BigNumber
   daiAmount: BigNumber
+  wethAmount: BigNumber
   tokenLPAmount: BigNumber
   totalDaiValue: BigNumber
   totalWethValue: BigNumber

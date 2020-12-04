@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import { useWallet } from 'use-wallet'
 import useTokenBalance from '../../../hooks/useTokenBalance'
 import usePheezez from '../../../hooks/usePheezez'
+import useFRT from '../../../hooks/useFRT'
 import { getPheezezAddress } from '../../../pheezez/utils'
+import { getFRTAddress } from '../../../pheezez/utilsFRT'
 import { getBalanceNumber } from '../../../utils/formatBalance'
 import Button from '../../Button'
 import CardIcon from '../../CardIcon'
@@ -15,6 +17,7 @@ import ModalTitle from '../../ModalTitle'
 import Spacer from '../../Spacer'
 import Value from '../../Value'
 import tlogo from '../../../assets/img/tokenLogo.svg'
+import frtlogo from '../../../assets/img/LogoFRT.png'
 
 
 const AccountModal: React.FC<ModalProps> = ({ onDismiss }) => {
@@ -26,7 +29,9 @@ const AccountModal: React.FC<ModalProps> = ({ onDismiss }) => {
   }, [onDismiss, reset])
 
   const pheezez = usePheezez()
+  const frt = useFRT()
   const pheezezBalance = useTokenBalance(getPheezezAddress(pheezez))
+  const frtBalance = useTokenBalance(getFRTAddress(frt))
   //console.log("BALANCE", pheezezBalance)
 
   return (
@@ -42,7 +47,16 @@ const AccountModal: React.FC<ModalProps> = ({ onDismiss }) => {
             </CardIcon>
             <StyledBalance>
               <Value value={getBalanceNumber(pheezezBalance)} />
-              <Label text="Pheezez Balance" />
+              <Label text="PHZT Balance" />
+            </StyledBalance>
+          </StyledBalanceWrapper>
+          <StyledBalanceWrapper>
+            <CardIcon>
+            {<img src={frtlogo} height={50} alt = "Logo" />}
+            </CardIcon>
+            <StyledBalance>
+              <Value value={getBalanceNumber(frtBalance)} />
+              <Label text="FRT Balance" />
             </StyledBalance>
           </StyledBalanceWrapper>
         </div>

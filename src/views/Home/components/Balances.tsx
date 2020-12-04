@@ -38,7 +38,7 @@ import {
 } from '../../../pheezez/utilsFRT'
 import { getBalanceNumber, getBalanceNumbernoDec, getDisplayBalance } from '../../../utils/formatBalance'
 import Container from '../../../components/Container'
-import { frtFarmStartTime } from '../../../pheezez/lib/constants'
+import { frtFarmStartTime, rebaseStartTime } from '../../../pheezez/lib/constants'
 
 
 let ethUsd = 0
@@ -290,9 +290,9 @@ const TotaStakedinFRT: React.FC = () => {
     allStakedValue.forEach((element, index) => {
         (element.tokenPRiceinEther.toNumber() === 0 && element.tokenAmount.toNumber() > 0) || element.tokenPRiceinEther.isNaN() ? sumToken += element.tokenAmount.times(tokenUsd).toNumber() 
       : element.tokenPRiceinEther.toNumber() === 0 && element.frtAmount.toNumber() > 0 ? sumToken += element.frtAmount.times(tokenDai).toNumber()
-      : sumWeth += element.tokenPRiceinEther.toNumber()
+      : sumWeth += element.wethAmount.toNumber()
         
-      //console.log("ASTAKED VALUE", element.tokenLPAmount.toNumber(), element.frtAmount.toNumber(), element.tokenAmount.toNumber(), element.tokenPRiceinEther.toNumber(), element.frtAmount.toNumber() , tokenUsd, sumToken, sumTokenEth, sumWeth)
+      console.log("ASTAKED VALUE", element.tokenLPAmount.toNumber(), element.frtAmount.toNumber(), element.tokenAmount.toNumber(), element.tokenPRiceinEther.toNumber(), element.frtAmount.toNumber() , tokenUsd, sumToken, sumTokenEth, sumWeth)
 
     });
     sumToken = sumToken * 2
@@ -334,6 +334,7 @@ const Balances: React.FC = () => {
   const contract = getPoolContract(frt,0) //This is only used as a UseEffect dependency
   const { account, ethereum }: { account: any; ethereum: any } = useWallet()
   const [farmStart, setFarmStart] = useState(frtFarmStartTime * 1000 - Date.now() <= 0)
+  const [rebaseStart, setRebaseStart] = useState(rebaseStartTime * 1000 - Date.now() <= 0)
   const contracts : Array<any> = []
 
   useEffect(() => {
@@ -356,7 +357,7 @@ const Balances: React.FC = () => {
       let rrate = 0
       let sum = 0
       let rewardArray: Array<number> = []
-      for (let i=0; i < pools.length; i++)
+      for (let i=0; i < pools.length - 1; i++) //Modify HERE for next pools. i < pools.length
       {
         reward = await getCurrentFRTPerBlock(frt, contracts[i])
         //console.log("rewardssss11111111111",reward.toNumber())
@@ -466,7 +467,7 @@ const Balances: React.FC = () => {
                   <Spacer />
                   <div style={{ flex: 1 }}>
                     <Label text="FRT" />
-                    {!!account && farmStart? <FRTPrice /> : <StyledPrice>$--.--</StyledPrice>}
+                    {!!account && rebaseStart? <FRTPrice /> : <StyledPrice>$--.--</StyledPrice>}
                   </div>
                 </StyledBalance>
               </StyledBalances>

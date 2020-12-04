@@ -99,6 +99,31 @@ export const getCurrentFRTPerBlock = async (frt, poolContract) => {
   return currentRewardRate
 }
 
+export const getDailyRewards = async (frt, poolContract, account) => {
+  const nowTotSupply = new BigNumber(await frt.contracts.frt.methods.totalSupply().call())
+  const originalTotalSupply = new BigNumber(await poolContract.methods.origTotalSupply().call())
+  const myStakedTokens = new BigNumber (await poolContract.methods.balanceOf(account).call() )
+  const totalStakedTokens = new BigNumber (await poolContract.methods.totalSupply().call() )
+  const rewardRate = new BigNumber(await poolContract.methods.rewardRate().call())
+  const myRewardRate = rewardRate.multipliedBy(myStakedTokens).dividedBy(totalStakedTokens)
+  const myDailyRewardRate = myRewardRate.multipliedBy(86400)
+  console.log("DAILY", myStakedTokens.toNumber(), totalStakedTokens.toNumber(), rewardRate.toNumber(), myRewardRate.toNumber()  )
+  return myDailyRewardRate.multipliedBy(nowTotSupply).dividedBy(originalTotalSupply)
+}
+
+export const getWeeklyRewards = async (frt, poolContract, account) => {
+  const nowTotSupply = new BigNumber(await frt.contracts.frt.methods.totalSupply().call())
+  const originalTotalSupply = new BigNumber(await poolContract.methods.origTotalSupply().call())
+  const myStakedTokens = new BigNumber (await poolContract.methods.balanceOf(account).call() )
+  const totalStakedTokens = new BigNumber (await poolContract.methods.totalSupply().call() )
+  const rewardRate = new BigNumber(await poolContract.methods.rewardRate().call())
+  const myRewardRate = rewardRate.multipliedBy(myStakedTokens).dividedBy(totalStakedTokens)
+  const myWeeklyRewardRate = myRewardRate.multipliedBy(604800)
+
+  console.log("WEEKLY", myStakedTokens.toNumber(), totalStakedTokens.toNumber(), rewardRate.toNumber(), myRewardRate.toNumber()  )
+  return myWeeklyRewardRate.multipliedBy(nowTotSupply).dividedBy(originalTotalSupply)
+}
+
 
 /**Depending of the order of the reserves there is going to be a MUL Math.pow or a DIV in order to correct the decimals  */
 
@@ -191,12 +216,13 @@ export const getTotalStakedValue = async (
   // Calculate the whole daiAmount staked (Think about the half value of a LP pool represented in DAI Amount)
   const daiAmount = lpDAIWorth.times(portionLp).div(new BigNumber(10).pow(18))
 
-  //console.log("WHAT?", totalSupply, "WETH:", wethAmount.toNumber() , "TOKENLPAM:",tokenLPAmount.toNumber(), tokenAmount.toNumber(), frtAmount.toNumber(), daiAmount.toNumber(), totalLpValue.div(new BigNumber(10).pow(18)).toNumber()  )
+  console.log("WHAT?", totalSupply, "WETH:", wethAmount.toNumber() , "TOKENLPAM:",tokenLPAmount.toNumber(), tokenAmount.toNumber(), frtAmount.toNumber(), daiAmount.toNumber(), totalLpValue.div(new BigNumber(10).pow(18)).toNumber()  )
   return {
     tokenAmount,
     tokenLPAmount,
     frtAmount,
     daiAmount,
+    wethAmount,
     totalDaiValue: totalLpValue.div(new BigNumber(10).pow(18)),
     totalWethValue: totalLpWethValue.div(new BigNumber(10).pow(18)),
     tokenPriceInDai: daiAmount.div(tokenLPAmount),

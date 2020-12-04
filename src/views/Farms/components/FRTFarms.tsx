@@ -16,10 +16,13 @@ import useAllStakedValueFRT, {
 import useFRTFarms from '../../../hooks/useFRTFarms'
 import useFRT from '../../../hooks/useFRT'
 import usePheezez from '../../../hooks/usePheezez'
-import { getEarned, getPoolContract, getCurrentFRTPerBlock, getPools, getFRTDAIValue, getFRTDAIContract } from '../../../pheezez/utilsFRT'
+import useEarnings from '../../../hooks/useFRTEarnings'
+import { getEarned, getPoolContract, getCurrentFRTPerBlock, getPools, getFRTDAIValue, getFRTDAIContract, getDailyRewards, getWeeklyRewards } from '../../../pheezez/utilsFRT'
 import { bnToDec } from '../../../utils'
 import { getpheezezethContract, getethusdContract, calculateTokenUSDValue } from '../../../pheezez/utils'
 import { stakingStartTime } from '../../../pheezez/lib/constants'
+import { getBalanceNumber, getBalanceNumbernoDec, getDisplayBalance, getFullDisplayBalance } from '../../../utils/formatBalance'
+
 
 interface FarmWithStakedValue extends Farm, StakedValue {
   apy: BigNumber
@@ -120,7 +123,7 @@ const FRTFarms: React.FC = () => {
       }
 
       if (stakedValue[i] && FRT_PER_BLOCK[i]) {
-       // console.log("FARMS", phztPrice, tokenPrice.toNumber(), stakedValue[i].poolWeight.toNumber(), FRT_PER_BLOCK[i].toNumber(), stakedValue[i].tokenAmount.times(phztPrice).toNumber())
+        // console.log("FARMS", phztPrice, tokenPrice.toNumber(), stakedValue[i].poolWeight.toNumber(), FRT_PER_BLOCK[i].toNumber(), stakedValue[i].tokenAmount.times(phztPrice).toNumber())
       }
 
       const newFarmRows = [...farmRows]
@@ -164,9 +167,14 @@ interface FarmCardProps {
 const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   const [startTime, setStartTime] = useState(stakingStartTime)
   const [harvestable, setHarvestable] = useState(0)
-
+  const [currentReward, setCurrentReward] = useState(new BigNumber(0))
+  const [dailyReward, setdailyReward] = useState(new BigNumber(0))
+  const [weeklyReward, setweeklyReward] = useState(new BigNumber(0))
   const { account } = useWallet()
   const frt = useFRT()
+  const earnings = useEarnings(farm.pid)
+
+  console.log("Earning", earnings.toNumber())
 
   const renderer = (countdownProps: CountdownRenderProps) => {
     const { days, hours, minutes, seconds } = countdownProps
@@ -180,6 +188,30 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
       </span>
     )
   }
+
+  useEffect(() => {
+    async function fetchCurrentTokensPerBlock() {
+      let reward = new BigNumber(0)
+      let dReward = new BigNumber(0)
+      let wReward = new BigNumber(0)
+      reward = await getCurrentFRTPerBlock(frt, getPoolContract(frt, farm.pid))
+      //console.log("rewardssss11111111111",reward.toNumber())
+      dReward = await getDailyRewards(frt, getPoolContract(frt, farm.pid), account)
+      wReward = await getWeeklyRewards(frt, getPoolContract(frt, farm.pid), account)
+      reward = reward.multipliedBy(new BigNumber(13)).dividedBy(new BigNumber(10).pow(18))
+
+    
+      
+      
+
+      setCurrentReward(reward)
+      setdailyReward(dReward)
+      setweeklyReward(wReward)
+    }
+    if (frt && account) {
+      fetchCurrentTokensPerBlock()
+    }
+  }, [frt, account, setCurrentReward])
 
   useEffect(() => {
     async function fetchEarned() {
@@ -242,68 +274,97 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
 
   return (
     <div>
-      <StyledCardWrapper>
-        {farm.tokenSymbol === 'FRT' ? animate = true : animate = false}
+      <StyledCardWrapperWrapper>
+        <StyledCardWrapper>
+          {farm.tokenSymbol === 'FRT' ? animate = true : animate = false}
 
-        <Card animation={animate} variant='secondary'>
-          <BackgroundSquare />
-          <CardContent>
-            <StyledContent>
-              <CardIcon size={sizu} label={mult} variant='secondary'>
-                <Spaner>{<img src={farm.icon} height={50} alt="Logo" />}</Spaner>
-                { (sizu === 'md') &&
-                (<Spaner>{<img src={farm.icon2} height={50} alt="Logo" />}</Spaner>)
+          <Card animation={animate} variant='secondary'>
+            <BackgroundSquare />
+            <CardContent>
+              <StyledContent>
+                <CardIcon size={sizu} label={mult} variant='secondary'>
+                  <Spaner>{<img src={farm.icon} height={50} alt="Logo" />}</Spaner>
+                  {(sizu === 'md') &&
+                    (<Spaner>{<img src={farm.icon2} height={50} alt="Logo" />}</Spaner>)
+                  }
+                </CardIcon>
+                <StyledTitle>{farm.name}</StyledTitle>
+                <StyledDetails>
+                  <StyledDetail>Deposit {farm.poolToken.toUpperCase()}</StyledDetail>
+                  <StyledDetail>Earn {farm.earnToken.toUpperCase()}</StyledDetail>
+                </StyledDetails>
+                <Spacer />
+                <StyledButtonWrapper>
+                  <Button
+                    disabled={!poolActive}
+                    text={poolActive ? 'Select' : undefined}
+                    to={`/farms/${farm.id}`}
+                    size='md'
+                  >
+                    {!poolActive && (
+                      <Countdown
+                        date={new Date(farm.starttime * 1000)}
+                        renderer={renderer}
+                      />
+                    )}
+                  </Button>
+                </StyledButtonWrapper>
+                <StyledInsight>
+                  <span>APY</span>
+                  <span>
+                    {farm.apy
+                      ? `${farm.apy
+                        .times(new BigNumber(100))
+                        .toNumber()
+                        .toLocaleString('en-US')
+                        .slice(0, -1)}%`
+                      : 'Loading ...'}
+                  </span>
+                </StyledInsight>
+                {(farm.unipool != "") && (
+                  <Footnote>
+                    <StyledAbsoluteLink
+                      href={farm.unipool}
+                      target="_blank"
+                    >
+                      Get Uniswap LP Token
+                   </StyledAbsoluteLink>
+
+                  </Footnote>
+                )
                 }
-              </CardIcon>
-              <StyledTitle>{farm.name}</StyledTitle>
-              <StyledDetails>
-                <StyledDetail>Deposit {farm.poolToken.toUpperCase()}</StyledDetail>
-                <StyledDetail>Earn {farm.earnToken.toUpperCase()}</StyledDetail>
-              </StyledDetails>
-              <Spacer />
-              <StyledButtonWrapper>
-                <Button
-                  disabled={!poolActive}
-                  text={poolActive ? 'Select' : undefined}
-                  to={`/farms/${farm.id}`}
-                  size='md'
-                >
-                  {!poolActive && (
-                    <Countdown
-                      date={new Date(farm.starttime * 1000)}
-                      renderer={renderer}
-                    />
-                  )}
-                </Button>
-              </StyledButtonWrapper>
-              <StyledInsight>
-                <span>APY</span>
-                <span>
-                  {farm.apy
-                    ? `${farm.apy
-                      .times(new BigNumber(100))
-                      .toNumber()
-                      .toLocaleString('en-US')
-                      .slice(0, -1)}%`
-                    : 'Loading ...'}
-                </span>
-              </StyledInsight>
-            </StyledContent>
-          </CardContent>
-        </Card>
-      </StyledCardWrapper>
-      { (farm.unipool != "") && (
-        <Footnote>
-          <StyledAbsoluteLink
-            href={farm.unipool}
-            target="_blank"
-          >
-            Get Uniswap LP Token
-      </StyledAbsoluteLink>
+              </StyledContent>
+            </CardContent>
+          </Card>
 
-        </Footnote>
-      )
-      }
+        </StyledCardWrapper>
+        <FootValues>
+          Reward per Block: 
+          <FootnoteValueRight>
+            { !poolActive ? "--.--" : getBalanceNumbernoDec(currentReward) } FRT 
+          </FootnoteValueRight>
+        </FootValues>
+        <FootValues>
+          Claimable: 
+          <FootnoteValueRight>
+           {!poolActive ? "--.--" : getDisplayBalance(earnings)} FRT
+          </FootnoteValueRight>
+        </FootValues>
+        <FootValues>
+          Daily Est.: 
+          <FootnoteValueRight>
+          { !poolActive ? "--.--" : dailyReward.isNaN() ? 0 : getDisplayBalance(dailyReward) } FRT 
+          </FootnoteValueRight>
+        </FootValues>
+        <FootValues>
+          Weekly Est.: 
+          <FootnoteValueRight>
+          { !poolActive ? "--.--" : weeklyReward.isNaN() ? 0 : getDisplayBalance(weeklyReward) } FRT
+          </FootnoteValueRight>
+        </FootValues>
+
+      </StyledCardWrapperWrapper>
+      
     </div>
   )
 }
@@ -373,6 +434,17 @@ const StyledCardWrapper = styled.div`
   border-radius: 1rem;
   display: flex;
   width: calc((900px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
+  height: 380px;
+  position: relative;
+  box-shadow: 0 24px 38px 3px ${(props) => props.theme.color.grey[800]},
+  0 9px 46px 8px ${(props) => props.theme.color.grey[800]},
+  0 11px 15px -7px ${(props) => props.theme.color.grey[800]};
+`
+const StyledCardWrapperWrapper = styled.div`
+  overflow: hidden;
+  border-radius: 1rem;
+  width: calc((900px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
+  height: 580px;
   position: relative;
   box-shadow: 0 24px 38px 3px ${(props) => props.theme.color.grey[800]},
   0 9px 46px 8px ${(props) => props.theme.color.grey[800]},
@@ -427,12 +499,33 @@ const StyledInsight = styled.div`
 `
 const Footnote = styled.div`
   z-index: 3;
+  top: 10px;
   position: relative;
-  top: -37px;
   text-align: center;
   font-size: 18px;
   font-size: 20px;
   color: ${(props) => props.theme.color.grey[906]};
   text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
 `
+const FootValues = styled.div`
+  z-index: 3;
+  font-size: 17px;
+  display: flex;
+  padding: 11px 20px;
+  color: ${(props) => props.theme.color.grey[906]};
+  border-bottom: solid 1px ${(props) => props.theme.color.grey[906]};
+  text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+`
+const FootnoteValueRight = styled.div`
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+  'Lucida Sans', Arial, sans-serif;
+  display: flex;
+  flex: 1;
+  top: -10px;
+  padding: 4px;
+  justify-content: flex-end;
+  font-size: 13px;
+`
+
+
 export default FRTFarms

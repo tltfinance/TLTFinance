@@ -19,6 +19,7 @@ import PageHeader from '../../components/PageHeader'
 import WalletProviderModal from '../../components/WalletProviderModal'
 import CannotRebaseModal from './components/CannotRebaseModal'
 import NoNeedToRebaseModal from './components/NoNeedToRebaseModal'
+import DormantPoolModal from './components/DormantPoolModal'
 import useModal from '../../hooks/useModal'
 import { rebaseStartTime } from '../../pheezez/lib/constants'
 import useRebase from '../../hooks/useRebase'
@@ -55,6 +56,10 @@ const Rebase: React.FC = () => {
   )
   const [noNeedtoRebase] = useModal(
     <NoNeedToRebaseModal/>,
+  )
+
+  const [onDormantPool] = useModal(
+    <DormantPoolModal/>,
   )
  // let rebaseActive = (Date.now() / 1000) % 3600 < 3 * 60
 
@@ -124,9 +129,13 @@ const Rebase: React.FC = () => {
         {
           onCannotRebase()
         }
-        else if (rebasable === "period" || rebasable === "price")
+        else if (rebasable === "price")
         {
           noNeedtoRebase()
+        }
+        else if (rebasable === "period")
+        {
+          onDormantPool()
         }
         
     }
@@ -261,6 +270,35 @@ const Rebase: React.FC = () => {
                 </StyledCardWrapper>
               </StyledCardsWrapper>
             </Split>
+            <Spacer size="lg" />
+            <StyledProposalsWrapper>
+            <Card variant = 'secondary'>
+            <StyledTitle>
+                        Rules:
+                    </StyledTitle>
+                    <StyledDetailsLeft>
+                        <StyledDetailSmall>
+                          - Rebase can only be triggered between XX:00:00 - XX:02:59 of every hour.
+                        </StyledDetailSmall>
+                        <StyledDetailSmall>
+                          - The same user cannot rebase again until another user has done a rebase.
+                        </StyledDetailSmall>
+                        <StyledDetailSmall>
+                          - Rebase won't occur if there is not enough price variation.
+                        </StyledDetailSmall>
+                        <StyledDetailSmall>
+                          - Rebase won't occur if there is no activity in the DAI-FRT pool.
+                        </StyledDetailSmall>
+                        <StyledDetailSmall>
+                          - The FRT rewards are random.
+                        </StyledDetailSmall>
+                        <StyledDetailSmall>
+                          - Only FRT Holders (any amount) can rebase .
+                        </StyledDetailSmall>
+                    </StyledDetailsLeft>
+
+            </Card>
+            </StyledProposalsWrapper>
             <Spacer size="lg" />
             <StyledProposalsWrapper>
               <Card>
@@ -482,10 +520,21 @@ const StyledDetails = styled.div`
   margin-top: ${(props) => props.theme.spacing[1]}px;
   text-align: center;
 `
+const StyledDetailsLeft = styled.div`
+  margin-top: ${(props) => props.theme.spacing[1]}px;
+  text-align: left;
+  margin-left: 30px;
+`
 
 const StyledDetail = styled.div`
   color: ${(props) => props.theme.color.grey[700]};
   font-size: 1.5rem;
+  text-shadow: 2px 2px 4px #000000;
+`
+
+const StyledDetailSmall = styled.div`
+  color: ${(props) => props.theme.color.grey[700]};
+  font-size: 1.2rem;
   text-shadow: 2px 2px 4px #000000;
 `
 const StyledTitle = styled.h4`
