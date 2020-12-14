@@ -3,11 +3,8 @@ import BigNumber from 'bignumber.js/bignumber'
 export const SUBTRACT_GAS_LIMIT = 100000
 export const stakingStartTime =1  //****Modify */
 export const proposalStartTime =1   //****Modify */
-export const rebaseStartTime = 1606266000
-export const frtFarmStartTime = 1606438800
 export const rebaseCounter = 3600
 export const REBASE_PERIOD = 600 
-
 
 const ONE_MINUTE_IN_SECONDS = new BigNumber(60)
 const ONE_HOUR_IN_SECONDS = ONE_MINUTE_IN_SECONDS.times(60)
@@ -43,7 +40,7 @@ export const contractAddresses = {
     4: '0xbfa8b98f4b7a762d689435237d91f6c4c9ef5990',
   },
   digester: {
-    4: '0xEfFDA75624EF1c282b333B38847cc2D0544B596E',
+    4: '0x05987879a0Eae6556A42cDcf16Abc9E83851DCd7',
   },
   weth: {
     4: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
@@ -105,17 +102,17 @@ export const supportedPools = [
   {
     pid: 0,
     lpAddresses: {
-      4: '0xff98979c95777a4657383754ad1e2890fda02824',
+      4: '0x4DCf3A1500E991Fd1EB35686100Bf1612F9dC3e2',
     },
     tokenAddresses: {
-      4: '0xff98979c95777a4657383754ad1e2890fda02824',
+      4: '0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990',
     },
-    name: 'GASU Pool',
-    symbol: 'GASU',
-    tokenSymbol: 'GASU',
+    name: 'PHZT v2-PHZ v1',
+    symbol: 'PHZT LP',
+    tokenSymbol: 'PHZTv2',
     icon: require("../../assets/img/eos-logo.svg"),
-    icon2: '',
-    unipool: "",
+    icon2: require("../../assets/img/tokenLogo.svg"),
+    unipool: "https://app.uniswap.org/#/add/0x1d234e079dca4be8cd49fcb13645f23098dc535c/0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990",
   },
   {
     pid: 1,
@@ -132,21 +129,7 @@ export const supportedPools = [
     icon2: require("../../assets/img/eth-logo.svg"),
     unipool: "https://app.uniswap.org/#/add/0xbFa8B98f4B7A762d689435237D91f6c4C9eF5990/ETH",
   },
-  {
-    pid: 2,
-    lpAddresses: {
-      4: '0xc2ca1777cc7795dbe1843be7cfd03b597ce731ec',
-    },
-    tokenAddresses: {
-      4: '0xc2ca1777cc7795dbe1843be7cfd03b597ce731ec',
-    },
-    name: 'QLO Pool',
-    symbol: 'QLO',
-    tokenSymbol: 'QLO',
-    icon: require("../../assets/img/sushi-logo.png"),
-    icon2: '',
-    unipool: "",
-  },
+  
   
 ]
 
@@ -210,5 +193,4 @@ export const frtPools = [
     unipool: "",
     starttime: 1606611600,
   },
-  
 ]

@@ -7,11 +7,6 @@
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "_devaddr",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "_initokensPerBlock",
         "type": "uint256"
@@ -55,6 +50,12 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountFRT",
+        "type": "uint256"
       }
     ],
     "name": "Deposit",
@@ -80,34 +81,15 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountFRT",
+        "type": "uint256"
       }
     ],
     "name": "EmergencyWithdraw",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount2",
-        "type": "uint256"
-      }
-    ],
-    "name": "InitSwapTest",
     "type": "event"
   },
   {
@@ -149,6 +131,18 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountFRT",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "bonusReward",
+        "type": "uint256"
       }
     ],
     "name": "Withdraw",
@@ -157,6 +151,19 @@
   {
     "inputs": [],
     "name": "BONUS_MULTIPLIER",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DURATION",
     "outputs": [
       {
         "internalType": "uint256",
@@ -220,6 +227,19 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "newFRTthres",
+        "type": "uint256"
+      }
+    ],
+    "name": "changeFRTThreshold",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "multiplier",
         "type": "uint256"
       },
@@ -244,6 +264,11 @@
       {
         "internalType": "uint256",
         "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountFRT",
         "type": "uint256"
       }
     ],
@@ -289,6 +314,32 @@
     "name": "emergencyWithdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "frt",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "frtThreshold",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -524,6 +575,30 @@
         "type": "uint256"
       },
       {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "rewardBonus",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_pid",
+        "type": "uint256"
+      },
+      {
         "internalType": "uint256",
         "name": "_allocPoint",
         "type": "uint256"
@@ -613,7 +688,22 @@
       },
       {
         "internalType": "uint256",
+        "name": "stakedFRT",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "stakedFRTTotalSupply",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "rewardDebt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bonusStart",
         "type": "uint256"
       }
     ],
@@ -630,6 +720,11 @@
       {
         "internalType": "uint256",
         "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountFRT",
         "type": "uint256"
       }
     ],

@@ -62,12 +62,21 @@ const Farm: React.FC = () => {
 
   return (
     <>
-      <PageHeader
+      { (icon2 === '') && (<PageHeader
+        icon={<img src={icon} height="120" alt="Logo" />}
+        subtitle={`Deposit ${lpTokenName}  Tokens and earn ${earnTokenName}`}
+        title={name}
+      />)
+       ||
+       (<PageHeader
         icon={<img src={icon} height="120" alt="Logo" />}
         icon2={<img src={icon2} height="120" alt="Logo" />}
         subtitle={`Deposit ${lpTokenName}  Tokens and earn ${earnTokenName}`}
         title={name}
-      />
+      />)
+      
+      
+      }
       <StyledFarm>
         <StyledCardsWrapper>
           <StyledCardWrapper>
@@ -85,14 +94,6 @@ const Farm: React.FC = () => {
           </StyledCardWrapper>
         </StyledCardsWrapper>
         <Spacer />
-        <div>
-          <Button
-            size="md"
-            text={`${lpTokenName} pair at Uniswap`}
-            href={unipool}
-
-          />
-        </div>
         <Spacer size="lg" />
         <StyledInfo>
           Withdrawal of earned Tokens is executed whenever LP Tokens are staked or unstaked!
@@ -140,7 +141,7 @@ const StyledCardWrapper = styled.div`
   overflow: hidden;
   border-radius: 1rem;
   display: flex;
-  width: calc((900px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
+  width: calc((1000px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
   position: relative;
   box-shadow: 0 24px 38px 3px ${(props) => props.theme.color.grey[800]},
   0 9px 46px 8px ${(props) => props.theme.color.grey[800]},

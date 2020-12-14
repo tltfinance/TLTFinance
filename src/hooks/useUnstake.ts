@@ -11,8 +11,8 @@ const useUnstake = (pid: number) => {
   const digesterContract = getDigesterContract(pheezez)
 
   const handleUnstake = useCallback(
-    async (amount: string) => {
-      const txHash = await unstake(digesterContract, pid, amount, account)
+    async (amount: string, amountFRT: string) => {
+      const txHash = await unstake(digesterContract, pid, amount, amountFRT, account)
       console.log(txHash)
     },
     [account, pid, pheezez],

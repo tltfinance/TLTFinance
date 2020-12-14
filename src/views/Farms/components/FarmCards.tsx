@@ -149,6 +149,15 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   const poolActive = startTime * 1000 - Date.now() <= 0
   //console.log("DATE", Date.now(), poolActive)
   var animate: boolean
+  let sizu: 'sm' | 'md'
+  switch (farm.tokenSymbol) {
+    case 'PHZT':
+      sizu = 'md'
+      break
+    default:
+      sizu = 'sm'
+  }
+
   let mult: string
   switch (farm.tokenSymbol) {
     case 'PHZT':
@@ -187,9 +196,11 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
         <BackgroundSquare />
         <CardContent>
           <StyledContent>
-            <CardIcon size='md' label={mult}>
-              <Spaner>{<img src={farm.icon} height={55} alt="Logo" />}</Spaner>
-              <Spaner>{<img src={farm.icon2} height={55} alt="Logo" />}</Spaner>
+            <CardIcon size={sizu}>
+              <Spaner>{<img src={farm.icon} height={50} alt="Logo" />}</Spaner>
+              {(sizu === 'md') &&
+                    (<Spaner>{<img src={farm.icon2} height={50} alt="Logo" />}</Spaner>)
+                  }
             </CardIcon>
             <StyledTitle>{farm.name}</StyledTitle>
             <StyledDetails>
@@ -224,7 +235,18 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
                   : 'Loading ...'}
               </span>
             </StyledInsight>
-            
+            {(farm.unipool != "") && (
+                  <Footnote>
+                    <StyledAbsoluteLink
+                      href={farm.unipool}
+                      target="_blank"
+                    >
+                      Get Uniswap LP Token
+                   </StyledAbsoluteLink>
+
+                  </Footnote>
+                )
+                }
           </StyledContent>
         </CardContent>
       </Card>
@@ -232,7 +254,21 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }) => {
   )
 }
 
-
+const StyledAbsoluteLink = styled.a`
+color: ${(props) => props.theme.color.grey[906]};
+text-decoration: none;
+width: 100%;
+&:hover {
+  color: ${(props) => props.theme.color.grey[905]};
+  border-radius: 4px;
+  transition: all 0.2s ease-out;
+}
+&.active {
+  color: ${(props) => props.theme.color.grey[906]};
+  transition: all 0.2s ease-out;
+  text-shadow: 2px 2px 4px #000000;
+}
+`
 const Spaner = styled.span`
  float:right;
  margin-left:5px;
@@ -249,6 +285,16 @@ const StyledCards = styled.div`
     width: 100%;
   }
 `
+const Footnote = styled.div`
+  z-index: 3;
+  top: 10px;
+  position: relative;
+  text-align: center;
+  font-size: 18px;
+  font-size: 20px;
+  color: ${(props) => props.theme.color.grey[906]};
+  text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+  `
 
 const StyledLoadingWrapper = styled.div`
   align-items: center;
@@ -283,6 +329,7 @@ const StyledCardWrapper = styled.div`
   display: flex;
   width: calc((900px - ${(props) => props.theme.spacing[4]}px * 2) / 3);
   position: relative;
+  height: 380px;
   box-shadow: 0 24px 38px 3px ${(props) => props.theme.color.grey[800]},
   0 9px 46px 8px ${(props) => props.theme.color.grey[800]},
   0 11px 15px -7px ${(props) => props.theme.color.grey[800]};

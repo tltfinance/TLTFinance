@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { isNullOrUndefined } from 'util'
 import { Contract } from 'web3-eth-contract'
 import Button from '../../../components/Button'
 import Card from '../../../components/Card'
@@ -15,12 +14,16 @@ import SubValue from '../../../components/SubValue'
 import Spacer from '../../../components/Spacer'
 import useAllowance from '../../../hooks/useAllowance'
 import useApprove from '../../../hooks/useApprove'
+import useApproveToken from '../../../hooks/useApproveToken'
+import useFRT from '../../../hooks/useFRT'
 import useModal from '../../../hooks/useModal'
 import useStake from '../../../hooks/useStake'
 import useStakedBalance from '../../../hooks/useStakedBalance'
+import useStakedFRTBalance from '../../../hooks/useStakedFRTBalance'
 import useTokenBalance from '../../../hooks/useTokenBalance'
 import useUnstake from '../../../hooks/useUnstake'
 import { getBalanceNumber } from '../../../utils/formatBalance'
+import { getFRTContract } from '../../../pheezez/utilsFRT'
 import DepositModal from './DepositModal'
 import WithdrawModal from './WithdrawModal'
 import uniLogo from '../../../assets/img/uni-logoBW.svg'
@@ -34,14 +37,19 @@ interface StakeProps {
 
 const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
   const [requestedApproval, setRequestedApproval] = useState(false)
-
+  const frt = useFRT()
+  const frtContract = getFRTContract(frt)
   const allowance = useAllowance(lpContract)
+  const allowanceFRT = useAllowance(frtContract)
   const { onApprove } = useApprove(lpContract)
+  const { onApproveToken } = useApproveToken(frtContract)
 
   const tokenBalance = useTokenBalance(lpContract.options.address)
+  const frtBalance = useTokenBalance(frtContract.options.address)
   const stakedBalance = useStakedBalance(pid)
+  const stakedFRTBalance = useStakedFRTBalance(pid)
 
-  //console.log("TEST3", pid, tokenName, tokenBalance.toNumber())
+  console.log("TEST3", pid, tokenName, tokenBalance.toNumber(), allowanceFRT.toNumber(), allowance.toNumber())
 
   const { onStake } = useStake(pid)
   const { onUnstake } = useUnstake(pid)
@@ -49,6 +57,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
   const [onPresentDeposit] = useModal(
     <DepositModal
       max={tokenBalance}
+      maxFRT={frtBalance}
       onConfirm={onStake}
       tokenName={tokenName}
     />,
@@ -57,6 +66,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
   const [onPresentWithdraw] = useModal(
     <WithdrawModal
       max={stakedBalance}
+      maxFRT={stakedFRTBalance}
       onConfirm={onUnstake}
       tokenName={tokenName}
     />,
@@ -66,6 +76,7 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
     try {
       setRequestedApproval(true)
       const txHash = await onApprove()
+      setRequestedApproval(false)
       // user rejected tx or didn't go thru
       if (!txHash) {
         setRequestedApproval(false)
@@ -75,6 +86,19 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
     }
   }, [onApprove, setRequestedApproval])
 
+  const handleFRTApprove = useCallback(async () => {
+    try {
+      setRequestedApproval(true)
+      const txHash = await onApproveToken()
+      // user rejected tx or didn't go thru
+      if (!txHash) {
+        setRequestedApproval(false)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }, [onApproveToken, setRequestedApproval])
+
   return (
     <Card>
       <CardContent>
@@ -83,23 +107,58 @@ const Stake: React.FC<StakeProps> = ({ lpContract, pid, tokenName }) => {
             <CardIcon>{<img src={uniLogo} height={60} alt="Logo" />}</CardIcon>
             <Value value={getBalanceNumber(stakedBalance)} />
             <Label text={`${tokenName} Tokens Staked`} />
+            <Value value={getBalanceNumber(stakedFRTBalance)} />
+            <Label text={`FRT Staked`} />
             <Spacer />
             {tokenBalance.toNumber() > 0 ? (
               <Footnote>
-                <SubValue label='Balance: ' value={getBalanceNumber(tokenBalance)} />
+                <SubValue label={`${tokenName} Balance: `} value={getBalanceNumber(tokenBalance)} />
+                <SubValue label={`FRT Balance: `} value={getBalanceNumber(frtBalance)} />
               </Footnote>
             ) : (
                 null
               )}
           </StyledCardHeader>
           <StyledCardActions>
-            {!allowance.toNumber() ? (
+            {!allowance.toNumber() && !allowanceFRT.toNumber() ? (
+              <>
               <Button
                 disabled={requestedApproval}
                 onClick={handleApprove}
                 text={`Approve ${tokenName}`}
               />
-            ) : (
+              <Spacer/>
+              <Button
+                disabled={requestedApproval}
+                onClick={handleFRTApprove}
+                text={`Approve FRT`}
+              />
+              </>
+            )
+            :
+             !allowanceFRT.toNumber()
+            ?
+            ( <>
+              <Spacer/>
+              <Button
+                disabled={requestedApproval}
+                onClick={handleFRTApprove}
+                text={`Approve FRT`}
+              />
+              </>
+            ) 
+            :
+             !allowance.toNumber()
+            ?
+            ( <>
+              <Spacer/>
+              <Button
+                disabled={requestedApproval}
+                onClick={handleApprove}
+                text={`Approve ${tokenName}`}
+              />
+              </>
+            ): (
                 <>
                   <StyledButtonWrapper>
                     <Button
@@ -126,7 +185,7 @@ const StyledButtonWrapper = styled.div`
   width:50%;
 `
 const Footnote = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   padding: 8px 20px;
   border-top: solid 3px ${(props) => props.theme.color.grey[300]};
 `

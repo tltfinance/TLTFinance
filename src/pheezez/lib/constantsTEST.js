@@ -1,8 +1,12 @@
 import BigNumber from 'bignumber.js/bignumber'
 
 export const SUBTRACT_GAS_LIMIT = 100000
-export const stakingStartTime =1601866920   //****Modify */
-export const proposalStartTime =1602734905   //****Modify */
+export const stakingStartTime =1  //****Modify */
+export const proposalStartTime =1   //****Modify */
+export const rebaseStartTime = 1606266000
+export const frtFarmStartTime = 1606438800
+export const rebaseCounter = 3600
+export const REBASE_PERIOD = 600 
 
 const ONE_MINUTE_IN_SECONDS = new BigNumber(60)
 const ONE_HOUR_IN_SECONDS = ONE_MINUTE_IN_SECONDS.times(60)
@@ -27,10 +31,13 @@ export const INTEGERS = {
 export const addressMap = {
   uniswapFactoryV2: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
   WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  FRT: '0x561695f9556AF49C2B22F71e55b7b0B6F673834f',
+  govLeg: '0x62823702F035edD42d678563C2c6af5648908A48',
+  newGov: '0xA01f257c20Fa5c094917Bf2C755de517839b8Ee4'
 }
 
 
-////Change network Id numbers when needed
+////Change the numbers of the NETWORK IDSSSSS
 ////
 export const contractAddresses = {
   pheezez: {
@@ -49,12 +56,31 @@ export const contractAddresses = {
     1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
   },
   gov: {
-    1: '0x62823702F035edD42d678563C2c6af5648908A48',
+    1: '0xA01f257c20Fa5c094917Bf2C755de517839b8Ee4',
   },
   timelock: {
     1: '0xb07b20EF02Fe024f4Cb2E6F48F3af96Ba2e41994',
   },
+  frt: {
+    1: '0x561695f9556AF49C2B22F71e55b7b0B6F673834f',
+  },
+  frtRebaser: {
+    1: '0x86b45CcF54E28389C8eC6171aAB27c972De1f5d1',
+  },
+  frtTreasury: {
+    1: '0x357B034c85E3f518f4EAD6d13b0390B68542d6A2',
+  },
+  frtPool1: {
+    1: '0x6A1d98DaE0963ab8898ba02b652D1647Bd758E47',
+  },
+  dai: {
+    1: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+  },
+  frtdai: {
+    1: '0xFbfe86d339B510860a0b9C4112e30173297A52b7',
+  },
 }
+
 /*
 UNI-V2 LP Address on mainnet for reference
 ==========================================
@@ -74,7 +100,7 @@ UNI-V2 LP Address on mainnet for reference
 */
 
 
-////CAMBIAR LOS NUMEROS DE LAS NETWORK IDSSSSS
+////Change the network IDSSSSS
 ////
 export const supportedPools = [
   {
@@ -91,21 +117,6 @@ export const supportedPools = [
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/eth-logo.svg"),
     unipool: "https://app.uniswap.org/#/add/0x8296BcEd40BA067a1de30aEB5a294258c16a0473/ETH",
-  },
-  {
-    pid: 1,
-    lpAddresses: {
-      1: '0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852',
-    },
-    tokenAddresses: {
-      1: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    },
-    name: 'ETH-USDT',
-    symbol: 'ETH-USDT LP',
-    tokenSymbol: 'USDT',
-    icon: require("../../assets/img/usdt-logo.svg"),
-    icon2: require("../../assets/img/eth-logo.svg"),
-    unipool: "https://app.uniswap.org/#/add/0xdAC17F958D2ee523a2206206994597C13D831ec7/ETH",
   },
   {
     pid: 2,
@@ -153,21 +164,6 @@ export const supportedPools = [
     unipool: "https://app.uniswap.org/#/add/0x429881672B9AE42b8EbA0E26cD9C73711b891Ca5/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
   {
-    pid: 5,
-    lpAddresses: {
-      1: '0x6Bd1b7EF4Ce45274D247D90DE356565C836F2A57',
-    },
-    tokenAddresses: {
-      1: '0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183',
-    },
-    name: 'PHZT-SHROOM',
-    symbol: 'PHZT-SHROOM LP',
-    tokenSymbol: 'SHROOM',
-    icon: require("../../assets/img/tokenLogo.svg"),
-    icon2: require("../../assets/img/shroom-logo.png"),
-    unipool: "https://app.uniswap.org/#/add/0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
-  },
-  {
     pid: 6,
     lpAddresses: {
       1: '0x73d961fC88B8be968ff266f1F4FE6B1EcEadAc17',
@@ -196,5 +192,68 @@ export const supportedPools = [
     icon: require("../../assets/img/tokenLogo.svg"),
     icon2: require("../../assets/img/sake-logo.svg"),
     unipool: "https://app.uniswap.org/#/add/0x066798d9ef0833ccc719076Dab77199eCbd178b0/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
+  },
+]
+
+
+//Pools related to FRT
+
+export const frtPools = [
+  {
+    pid: 0,
+    poolAddresses: {
+      1: '0x9133B95A6C379efc1648D3b6fCF78D4904deF2E5',
+    },
+    lpAddresses: {
+      1: '0xFbfe86d339B510860a0b9C4112e30173297A52b7',
+    },
+    tokenAddresses: {
+      1: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+    },
+    name: 'FRT-DAI Pool',
+    symbol: 'FRT-DAI',
+    tokenSymbol: 'FRTLP',
+    icon: require("../../assets/img/LogoFRT.png"),
+    icon2: require("../../assets/img/dai-logo.svg"),
+    unipool: "https://app.uniswap.org/#/add/0x561695f9556af49c2b22f71e55b7b0b6f673834f/0x6b175474e89094c44da98b954eedeac495271d0f",
+    starttime: 1606438800,
+  },
+  {
+    pid: 1,
+    poolAddresses: {
+      1: '0x6443a6d9f7D037561AacEA1F4205D9e62f91dAee',
+    },
+    lpAddresses: {
+      1: '0xbA37650F1dAD444E0EE83aA4F42F7Bba2749A549',
+    },
+    tokenAddresses: {
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
+    },
+    name: 'PHZT-ETH Pool',
+    symbol: 'PHZT-ETH',
+    tokenSymbol: 'PHZTLP',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/eth-logo.svg"),
+    unipool: "https://app.uniswap.org/#/add/0x8296BcEd40BA067a1de30aEB5a294258c16a0473/ETH",
+    starttime: 1606525200,
+  },
+  {
+    pid: 2,
+    poolAddresses: {
+      1: '0x6A1d98DaE0963ab8898ba02b652D1647Bd758E47',
+    },
+    lpAddresses: {
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
+    },
+    tokenAddresses: {
+      1: '0x8296BcEd40BA067a1de30aEB5a294258c16a0473',
+    },
+    name: 'PHZT Pool',
+    symbol: 'PHZT',
+    tokenSymbol: 'PHZT',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: '',
+    unipool: "",
+    starttime: 1606611600,
   },
 ]

@@ -10,11 +10,12 @@ const useStake = (pid: number) => {
   const pheezez = usePheezez()
 
   const handleStake = useCallback(
-    async (amount: string) => {
+    async (amount: string, amountFRT: string) => {
       const txHash = await stake(
         getDigesterContract(pheezez),
         pid,
         amount,
+        amountFRT,
         account,
       )
       console.log(txHash)

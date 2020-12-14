@@ -178,11 +178,13 @@ export const getPheezezSupply = async (pheezez) => {
   return new BigNumber(await pheezez.contracts.pheezez.methods.totalSupply().call())
 }
 
-export const stake = async (digesterContract, pid, amount, account) => {
+export const stake = async (digesterContract, pid, amount, amountFRT, account) => {
+  console.log("SATKING", pid, amount, amountFRT)
   return digesterContract.methods
     .deposit(
       pid,
       new BigNumber(amount).times(new BigNumber(10).pow(18)).toString(),
+      new BigNumber(amountFRT).times(new BigNumber(10).pow(18)).toString()
     )
     .send({ from: account })
     .on('transactionHash', (tx) => {
@@ -192,11 +194,12 @@ export const stake = async (digesterContract, pid, amount, account) => {
 
 }
 
-export const unstake = async (digesterContract, pid, amount, account) => {
+export const unstake = async (digesterContract, pid, amount, amountFRT, account) => {
   return digesterContract.methods
     .withdraw(
       pid,
       new BigNumber(amount).times(new BigNumber(10).pow(18)).toString(),
+      new BigNumber(amountFRT).times(new BigNumber(10).pow(18)).toString()
     )
     .send({ from: account })
     .on('transactionHash', (tx) => {
@@ -206,7 +209,7 @@ export const unstake = async (digesterContract, pid, amount, account) => {
 }
 export const harvest = async (digesterContract, pid, account) => {
   return digesterContract.methods
-    .deposit(pid, '0')
+    .deposit(pid, '0', '0')
     .send({ from: account })
     .on('transactionHash', (tx) => {
       console.log(tx)
@@ -220,6 +223,39 @@ export const getStaked = async (digesterContract, pid, account) => {
       .userInfo(pid, account)
       .call()
     return new BigNumber(amount)
+  } catch {
+    return new BigNumber(0)
+  }
+}
+
+export const getBonusPercent = async (digesterContract, pid, account) => {
+  try {
+    const rewardBonusPer = await digesterContract.methods
+      .rewardBonus(pid, account)
+      .call()
+    return rewardBonusPer
+  } catch {
+    return 0
+  }
+}
+
+export const bonusStart = async (digesterContract, pid, account) => {
+  try {
+    const { bonusStart } = await digesterContract.methods
+      .userInfo(pid, account)
+      .call()
+    return new BigNumber(bonusStart)
+  } catch {
+    return new BigNumber(0)
+  }
+}
+
+export const getFRTStaked = async (digesterContract, pid, account) => {
+  try {
+    const { stakedFRT } = await digesterContract.methods
+      .userInfo(pid, account)
+      .call()
+    return new BigNumber(stakedFRT)
   } catch {
     return new BigNumber(0)
   }
@@ -571,4 +607,37 @@ export const getVotes = async (pheezez) => {
   let BASE18 = new BigNumber(10).pow(18);
   const votesRaw = new BigNumber(await pheezez.contracts.pheezez.methods.votesAvailable().call()).dividedBy(BASE18).toNumber()
   return votesRaw
+}
+
+export const bonusFRTpercent = (amountFRT) => {
+  let BASE18 = new BigNumber(10).pow(18);
+  const frtOTotSupply = new BigNumber(100000).multipliedBy(BASE18);
+  const frtThreshold = new BigNumber(50).multipliedBy(BASE18);
+ 
+  
+  let currentBonusPerc = new BigNumber(amountFRT).multipliedBy(100).dividedBy(frtOTotSupply).toNumber();
+  if (currentBonusPerc < 10){
+      currentBonusPerc = 10;
+  }
+  if (amountFRT < frtThreshold)
+  {
+    currentBonusPerc = 0;
+  }
+  return currentBonusPerc.toFixed(2);
+}
+
+export const excludeFRTBonus = (earnings, bonusPercentage, flag) => {
+  if (flag === 1)
+  {
+    const netAmount = new BigNumber(earnings.dividedBy(new BigNumber(bonusPercentage).dividedBy(100).plus(1)))
+    return netAmount
+  }
+  else if (flag === 0)
+  {
+    const excludedBonus =  new BigNumber(earnings.dividedBy(new BigNumber(bonusPercentage).dividedBy(100).plus(1))).minus(earnings).multipliedBy(-1)
+    console.log("EARN BONUS", earnings.toNumber(), bonusPercentage)
+    return excludedBonus
+  }
+  
+  
 }

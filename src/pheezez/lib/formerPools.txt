@@ -13,3 +13,34 @@
     icon2: require("../../assets/img/padthai-logo.png"),
     unipool: "https://app.uniswap.org/#/add/0x6f450f117114075D1D1C91dD64a61C0bA72ca68F/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
   },
+
+  {
+    pid: 1,
+    lpAddresses: {
+      1: '0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852',
+    },
+    tokenAddresses: {
+      1: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    },
+    name: 'ETH-USDT',
+    symbol: 'ETH-USDT LP',
+    tokenSymbol: 'USDT',
+    icon: require("../../assets/img/usdt-logo.svg"),
+    icon2: require("../../assets/img/eth-logo.svg"),
+    unipool: "https://app.uniswap.org/#/add/0xdAC17F958D2ee523a2206206994597C13D831ec7/ETH",
+  },
+  {
+    pid: 5,
+    lpAddresses: {
+      1: '0x6Bd1b7EF4Ce45274D247D90DE356565C836F2A57',
+    },
+    tokenAddresses: {
+      1: '0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183',
+    },
+    name: 'PHZT-SHROOM',
+    symbol: 'PHZT-SHROOM LP',
+    tokenSymbol: 'SHROOM',
+    icon: require("../../assets/img/tokenLogo.svg"),
+    icon2: require("../../assets/img/shroom-logo.png"),
+    unipool: "https://app.uniswap.org/#/add/0xEd0439EACf4c4965AE4613D77a5C2Efe10e5f183/0x8296BcEd40BA067a1de30aEB5a294258c16a0473",
+  },
